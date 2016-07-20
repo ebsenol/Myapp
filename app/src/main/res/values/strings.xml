@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Project</string>
+    <string name="page1">Go to page 1</string>
+    <string name="number_hint">Enter a number</string>
+</resources>
