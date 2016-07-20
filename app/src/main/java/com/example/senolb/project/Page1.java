@@ -20,25 +20,8 @@ public class Page1 extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-  /*      EditText text = (EditText)findViewById(R.id.first_number);
-        String numStr=text.getText().toString();
-        int num=0;
-        if (numStr.length()>0) {
-            try {
-                num = Integer.parseInt(numStr);
-            } catch (Exception e) {
-                Log.e("logtag", "Exception: " + e.toString());
-            }
-        }
-        // num *= num;
-        TextView text2= (TextView)findViewById(R.id.first_text);
-        //LinearLayout lView = new LinearLayout(this);
-
-        //setContentView(lView);
-        text2.setText("Square of the number is " + num);
-        */
     }
+
     public void computeSquare(View view){
         EditText text = (EditText)findViewById(R.id.first_number);
         String numStr=text.getText().toString();
