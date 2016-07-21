@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import retrofit2.Call;
+import retrofit2.Retrofit;
+
 public class Page1 extends AppCompatActivity {
     private TextView myText = null;
     public int num = 0;
@@ -26,7 +29,7 @@ public class Page1 extends AppCompatActivity {
         Glide.with(this).load("https://media.giphy.com/media/LyJ6KPlrFdKnK/giphy.gif").into(imageView);
     }
     public void computeSquare(View view){
-        EditText text = (EditText)findViewById(R.id.first_number);
+       /* EditText text = (EditText)findViewById(R.id.first_number);
         String numStr=text.getText().toString();
       //  Intent intent = new Intent();
         //String message = editText.getText().toString();
@@ -41,7 +44,24 @@ public class Page1 extends AppCompatActivity {
         TextView text2= (TextView)findViewById(R.id.first_text);
         num = num*num;
         text2.setText("Square of the number is " + num);
-       // startActivity(intent);
+       // startActivity(intent);*/
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&fmt=json&limit=1&q=")
+                .build();
+
+        ApiInterface service = retrofit.create(ApiInterface.class);
+        String tag="funny";
+
+        Gif testGif = null;
+        String url="";
+        Gif myGif = service.getGif(url);
+        TextView text2= (TextView)findViewById(R.id.first_text);
+
+        //testGif = myGif.execute();
+
+       // text2.setText(myGif.getUrl());
+
     }
 
     public void goBack(View view){
