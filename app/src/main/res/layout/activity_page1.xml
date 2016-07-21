@@ -31,7 +31,18 @@
     <Button
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="Compute the square"
+        android:text="Get a random movie"
         android:onClick="computeSquare"
-        android:id="@+id/square_button"/>
+        android:id="@+id/movie_button"/>
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Back"
+        android:onClick="goBack"
+        android:id="@+id/go_back_page1"/>
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       />
 </LinearLayout>
