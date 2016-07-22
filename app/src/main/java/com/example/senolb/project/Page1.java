@@ -10,58 +10,73 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import retrofit2.Response;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.GsonBuilder;
+
+import java.io.IOException;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Page1 extends AppCompatActivity {
-    private TextView myText = null;
-    public int num = 0;
-    public int prevNum = 0;
-    // TODO - insert your themoviedb.org API KEY here
-//    private final static String API_KEY = "052ab3ed3f1f39a747fc24b817ee31e7";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_page1);
-        ImageView imageView = (ImageView) findViewById(R.id.imageView1);
-        Glide.with(this).load("https://media.giphy.com/media/LyJ6KPlrFdKnK/giphy.gif").into(imageView);
+      //  ImageView imageView = (ImageView) findViewById(R.id.imageView1);
+     //   Glide.with(this).load("https://media.giphy.com/media/LyJ6KPlrFdKnK/giphy.gif").into(imageView);
     }
-    public void computeSquare(View view){
-       /* EditText text = (EditText)findViewById(R.id.first_number);
-        String numStr=text.getText().toString();
-      //  Intent intent = new Intent();
-        //String message = editText.getText().toString();
+    public void request(View view) throws IOException {
 
-    //    if (numStr.length()>0) {
-            try {
-                num = Integer.parseInt(numStr);
-            } catch (Exception e) {
-                Log.e("logtag", "Exception: " + e.toString());
-            }
-    //    }
-        TextView text2= (TextView)findViewById(R.id.first_text);
-        num = num*num;
-        text2.setText("Square of the number is " + num);
-       // startActivity(intent);*/
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&fmt=json&limit=1&q=")
-                .build();
-
-        ApiInterface service = retrofit.create(ApiInterface.class);
-        String tag="funny";
-
-        Gif testGif = null;
-        String url="";
-        Gif myGif = service.getGif(url);
         TextView text2= (TextView)findViewById(R.id.first_text);
 
-        //testGif = myGif.execute();
+        ApiInterface service = ApiInterface.retrofit.create(ApiInterface.class);
+        Call<Downsized> myDownsized = service.getDownsized("dc6zaTOxFJmzC","json","funny","1");
+        //Downsized a= myDownsized.execute().body();
+        //text2.setText(a.getUrl());
+     myDownsized.enqueue(new Callback<Downsized>() {
+         @Override
+         public void onResponse(Call<Downsized> call, Response<Downsized> response) {
+             if (response.isSuccessful()) {
+                 //Downsized DownsizedResponse =
+                 //String data = DownsizedResponse.getUrl();
+                 //String id = DownsizedResponse.getId();
+                 TextView text2 = (TextView) findViewById(R.id.first_text);
+                 //testDownsized = response.body();
+                 //  testDownsized.setUrl(response.body().getUrl());
+                 //   text2.setText("response");
 
-       // text2.setText(myGif.getUrl());
-
+                 //        text2.setText("response.isSuccess");
+                 //     if (response.body()!=null)
+                Downsized dw = response.body();
+                 text2.setText(dw.getUrl());
+                 // text2.setText(response.body().getUrl());
+                 //if(response.body().getUrl()==null)
+                 // text2.setText("getUrl returns null");
+                 //text2.setText(testDownsized.getUrl()+"aa");
+                 //  adapter = new DataAdapter(data);
+                 //  recyclerView.setAdapter(adapter);
+               /*
+               TextView text2= (TextView)findViewById(R.id.first_text);
+               text2.setText(data);
+               data = DownsizedResponse.getSlug();
+               text2.setText(data);*/
+                 //  data = DownsizedResponse.getSlug();*/
+             } else {
+                 //unsuccessful response
+             }
+         }
+         @Override
+         public void onFailure(Call<Downsized> call, Throwable t) {
+             Log.d("Error", t.getMessage());
+             TextView text2 = (TextView) findViewById(R.id.first_text);
+             text2.setText(t.getMessage());
+         }
+     });
+     //  myGif.execute();
     }
 
     public void goBack(View view){

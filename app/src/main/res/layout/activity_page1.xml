@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="Welcome to page 1!"
         android:textStyle="bold"
-        android:textSize="50sp"/>
+        android:textSize="30sp"/>
 
     <EditText
         android:id="@+id/first_number"
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="Get a random movie"
-        android:onClick="computeSquare"
+        android:onClick="request"
         android:id="@+id/movie_button"/>
     <Button
         android:layout_height="wrap_content"
