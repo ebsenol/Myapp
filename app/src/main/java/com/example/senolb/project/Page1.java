@@ -21,7 +21,7 @@ public class Page1 extends Activity {
 
     public String prevUrl="";
     public String url ="";
-    final public int total = 20;
+    final public int total = 10;
     public String[] titles = new String[total];
     public int count = 0;
 
@@ -64,48 +64,55 @@ public class Page1 extends Activity {
         });
 
     }
-
-    public void request(View view) throws IOException {
-
+    public void showName(View view){
         TextView text2= (TextView)findViewById(R.id.first_text);
-        String keyword = titles[count];
-        text2.setText(titles[count]);
-        count++;
-        ApiInterface service = ApiInterface.retrofit.create(ApiInterface.class);
-        Call<JsonResponse> myDownsized = service.getGif("dc6zaTOxFJmzC", "json", keyword);
+        if (count==0)
+            text2.setText("--no title--");
+        else
+            text2.setText(titles[count-1]);
+    }
+    public void request(View view) throws IOException {
+        if (count == total){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+        else {
+            TextView text2 = (TextView) findViewById(R.id.first_text);
+            String keyword = titles[count];
+            keyword = "movie " + keyword;
+            text2.setText("");
+            count++;
+            ApiInterface service = ApiInterface.retrofit.create(ApiInterface.class);
+            Call<JsonResponse> myDownsized = service.getGif("dc6zaTOxFJmzC", "json", keyword);
 
-        myDownsized.enqueue(new Callback<JsonResponse>() {
-            @Override
-            public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
-                if (response.isSuccessful()) {
-                     Data data = response.body().getData();
+            myDownsized.enqueue(new Callback<JsonResponse>() {
+                @Override
+                public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
+                    if (response.isSuccessful()) {
+                        Data data = response.body().getData();
                         prevUrl = url;
                         url = data.getImageOriginalUrl();
+
                         ImageView imageView = (ImageView) findViewById(R.id.imageView1);
                         GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
                         Glide.with(getApplicationContext()).load(url).into(imageViewTarget);
-                        // Glide.load(data.getImages().getDownsized().getUrl()).into(imageView);
-                        // Glide.with(getApplicationContext()).load(data.getImages().getDownsized().getUrl()).into(imageView);
 
-                  //  }
-
-                } else {
-                    TextView text2 = (TextView) findViewById(R.id.first_text);
-                    // dw = response.body();
-                    // text2.setText(data.getImages().getDownsized().getUrl());
-                    text2.setText("sad");
-                    //unsuccessful response
+                    } else { //unsuccessful response
+                        TextView text2 = (TextView) findViewById(R.id.first_text);
+                        text2.setText("sad");
+                    }
                 }
-            }
-         @Override
-         public void onFailure(Call<JsonResponse> call, Throwable t) {
-             Log.d("Error", t.getMessage());
-             TextView text2 = (TextView) findViewById(R.id.first_text);
-             text2.setText(t.getMessage());
-         }
-     });
-     //  myGif.execute();
+
+                @Override
+                public void onFailure(Call<JsonResponse> call, Throwable t) {
+                    Log.d("Error", t.getMessage());
+                    TextView text2 = (TextView) findViewById(R.id.first_text);
+                    text2.setText(t.getMessage());
+                }
+            });
+        }
     }
+
     public void prevGif(View view){
         TextView text2 = (TextView) findViewById(R.id.first_text);
         text2.setText("1");
