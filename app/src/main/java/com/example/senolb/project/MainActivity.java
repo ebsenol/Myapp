@@ -3,14 +3,8 @@ package com.example.senolb.project;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-
-import com.example.senolb.project.Page1;
-import com.example.senolb.project.R;
 
 public class MainActivity extends Activity {
 
@@ -32,5 +26,9 @@ public class MainActivity extends Activity {
     public void explore(View view){
         Intent intent = new Intent(this, ExploreGifs.class);
         startActivity(intent);
+    }
+    public void quit(View view){
+        //finish();
+        System.exit(0);
     }
 }

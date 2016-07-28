@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,27 +14,45 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="Welcome"
         android:textStyle="bold"
         android:id="@+id/welcomeText"
-        android:textSize="40sp"/>
+        android:textSize="40sp"
+        android:layout_marginTop="38dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
     <Button
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/page1"
+        android:layout_height="60dp"
+        android:layout_width="140dp"
+        android:background="@drawable/buttonshape"
+        android:text="PLAY"
         android:onClick="goToPage1"
-        android:id="@+id/button1"/>
+        android:id="@+id/button1"
+        android:layout_marginTop="112dp"
+        android:layout_below="@+id/welcomeText"
+        android:layout_alignStart="@+id/explore" />
 
     <Button
-        android:layout_height="100dp"
-        android:layout_width="100dp"
-        android:text="Go to wikipedia"
-        android:onClick="goToWiki"
-        android:id="@+id/button2"/>
-    <Button
-        android:layout_height="100dp"
-        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_width="140dp"
+        android:background="@drawable/buttonshape"
         android:text="Explore gifs"
         android:onClick="explore"
-        android:id="@+id/explore"/>
-</LinearLayout>
+        android:id="@+id/explore"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="38dp"
+        android:layout_below="@+id/button1"
+        android:layout_alignStart="@+id/quit_button" />
+
+    <Button
+        android:layout_width="140dp"
+        android:layout_height="60dp"
+        android:onClick="quit"
+        android:background="@drawable/buttonshape"
+        android:text="Quit"
+        android:id="@+id/quit_button"
+        android:layout_marginBottom="88dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/welcomeText" />
+
+</RelativeLayout>

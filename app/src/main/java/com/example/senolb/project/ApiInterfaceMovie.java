@@ -11,12 +11,12 @@ import retrofit2.http.Query;
 
 public interface ApiInterfaceMovie {
     @GET("movie")
-    Call<JsonResponse2> getMovie(@Query("api_key") String key,
-                                   // @Query("sort_by") String sortType,
-                               //   @Query("with_genres") int genre,
+    Call<JsonResponse2> getMovie(        //   @Query("with_genres") int genre,
                                  @Query("language") String language,
-                                 @Query("page") String pageNum,
-                                 @Query("vote_average.gte") float vote
+                               @Query("api_key") String key,
+                                 @Query("page") String pageNum
+                              //  @Query("sort_by") String sortType
+                              //  @Query("vote_average.gte") float vote
                                //  @Query("vote_average.gte") float num
                            //      @Query("primary_release_year") String person
                                     );

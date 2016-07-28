@@ -2,20 +2,17 @@ package com.example.senolb.project;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import retrofit2.Response;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-import java.io.IOException;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -26,25 +23,24 @@ public class Page1 extends Activity {
     final public int total = 10;                    //total num of gifs to be shown
     public String[] titles = new String[total];     //to hold movie titles
     public int count = 0;                           //index of current movie
-    public int answer;
-    Button A = (Button) findViewById(R.id.answer_1);
-    Button B = (Button) findViewById(R.id.answer_2);
-    Button C = (Button) findViewById(R.id.answer_3);
+    public int answer = -1;
+    private Handler mHandler = new Handler();
+    public int trueCounter=0;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_page1);
 
         // call the movie api\
-        int num = 1+(int)(Math.random() * 50);
+        int num = 1+(int)(Math.random() * 100);
         TextView text2 = (TextView) findViewById(R.id.first_text);
 
         String numm = num +"";
 
         ApiInterfaceMovie service = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
-        float vote = (float) 5.9;
-        Call<JsonResponse2> movieList = service.getMovie("052ab3ed3f1f39a747fc24b817ee31e7","en",numm,vote); // insert queries
+        float vote = (float) 8.9;
+        Call<JsonResponse2> movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7",numm); // insert queries
         movieList.enqueue(new Callback<JsonResponse2>() {
             @Override
             public void onResponse(Call<JsonResponse2> call, Response<JsonResponse2> response) {
@@ -75,7 +71,6 @@ public class Page1 extends Activity {
                 text2.setText(t.getMessage());
             }
         });
-
     }
     public void showName(View view){ //show name of the current gif
         TextView text2= (TextView)findViewById(R.id.first_text);
@@ -84,9 +79,16 @@ public class Page1 extends Activity {
         else
             text2.setText(titles[count-1]);
     }
-    public void request(View view) throws IOException {
+
+    public void request(View view) {
      //   View v = findViewById(R.id.loading_spinner);
       //  v.setVisibility(View.VISIBLE);
+        Button A = (Button) findViewById(R.id.answer_1);
+        Button B = (Button) findViewById(R.id.answer_2);
+        Button C = (Button) findViewById(R.id.answer_3);
+        A.setBackgroundResource(R.drawable.buttonshape);
+        B.setBackgroundResource(R.drawable.buttonshape);
+        C.setBackgroundResource(R.drawable.buttonshape);
 
         if (count == total){ // go to main page if total count is reached
             Intent intent = new Intent(this, MainActivity.class);
@@ -118,7 +120,7 @@ public class Page1 extends Activity {
             }
 
             keyword = "movie " + keyword;
-            text2.setText("" + count);
+            text2.setText("True counter: " + trueCounter + "/" + count);
             count++;
 
             //call gif api
@@ -177,4 +179,51 @@ public class Page1 extends Activity {
         //String message = editText.getText().toString();
         startActivity(intent);
     }*/
+
+
+
+
+    public void check(View view) {
+        TextView text2=(TextView) findViewById(R.id.first_text);
+        //text2.setText("check" + count);
+        if ( answer == 1 && R.id.answer_1 == view.getId()){
+            trueAnswer(R.id.answer_1,view);
+        }
+        else if ( answer == 2 && R.id.answer_2 == view.getId()){
+            trueAnswer(R.id.answer_2,view);
+        }
+        else if ( answer == 3 && R.id.answer_3 == view.getId()){
+            trueAnswer(R.id.answer_3,view);
+        }
+        else if ( answer == -1 ){ //first click
+            request(view);
+        }
+        else falseAnswer( view.getId(),view);
+
+
+    }
+
+    public void trueAnswer(int id, final View view) {
+        trueCounter++;
+        Button trueButton = (Button) findViewById(id);
+        trueButton.setBackgroundResource(R.drawable.truebuttonshape);
+
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                request(view);
+            }
+        }, 1500);
+    }
+
+    public void falseAnswer(int id, final View view){
+        Button falseButton = (Button) findViewById(id);
+        falseButton.setBackgroundResource(R.drawable.falsebuttonshape);
+
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                request(view);
+            }
+        }, 1500);
+    }
 }
+
