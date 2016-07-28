@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:text="Hello World!"
         android:textStyle="bold"
+        android:id="@+id/welcomeText"
         android:textSize="40sp"/>
     <Button
         android:layout_height="wrap_content"
@@ -36,5 +37,4 @@
         android:text="Explore gifs"
         android:onClick="explore"
         android:id="@+id/explore"/>
-
 </LinearLayout>

@@ -2,16 +2,18 @@ package com.example.senolb.project;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import retrofit2.Response;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import java.io.IOException;
 import retrofit2.Call;
@@ -24,7 +26,10 @@ public class Page1 extends Activity {
     final public int total = 10;                    //total num of gifs to be shown
     public String[] titles = new String[total];     //to hold movie titles
     public int count = 0;                           //index of current movie
-
+    public int answer;
+    Button A = (Button) findViewById(R.id.answer_1);
+    Button B = (Button) findViewById(R.id.answer_2);
+    Button C = (Button) findViewById(R.id.answer_3);
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,9 +41,9 @@ public class Page1 extends Activity {
         TextView text2 = (TextView) findViewById(R.id.first_text);
 
         String numm = num +"";
-        text2.setText(numm);
+
         ApiInterfaceMovie service = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
-        float vote = (float) 6.9;
+        float vote = (float) 5.9;
         Call<JsonResponse2> movieList = service.getMovie("052ab3ed3f1f39a747fc24b817ee31e7","en",numm,vote); // insert queries
         movieList.enqueue(new Callback<JsonResponse2>() {
             @Override
@@ -80,6 +85,9 @@ public class Page1 extends Activity {
             text2.setText(titles[count-1]);
     }
     public void request(View view) throws IOException {
+     //   View v = findViewById(R.id.loading_spinner);
+      //  v.setVisibility(View.VISIBLE);
+
         if (count == total){ // go to main page if total count is reached
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -88,8 +96,29 @@ public class Page1 extends Activity {
             //get the movie title from array
             TextView text2 = (TextView) findViewById(R.id.first_text);
             String keyword = titles[count];
+            answer = 1 + (int) (Math.random() * 3);
+;
+            switch (answer) {
+                case 1:
+                    A.setText(keyword);
+                    B.setText("-wrong-");
+                    C.setText("-wrong-");
+                    break;
+                case 2:
+                    A.setText("-wrong-");
+                    B.setText(keyword);
+                    C.setText("-wrong-");
+                    break;
+                case 3:
+                    A.setText("-wrong-");
+                    B.setText("-wrong-");
+                    C.setText(keyword);
+                default:
+                    break;
+            }
+
             keyword = "movie " + keyword;
-            text2.setText("");
+            text2.setText("" + count);
             count++;
 
             //call gif api
@@ -108,7 +137,7 @@ public class Page1 extends Activity {
                         //display the gif
                         ImageView imageView = (ImageView) findViewById(R.id.imageView1);
                         GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
-                        Glide.with(getApplicationContext()).load(url).into(imageViewTarget);
+                        Glide.with(getApplicationContext()).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageViewTarget);
 
                     } else { //unsuccessful response
                         TextView text2 = (TextView) findViewById(R.id.first_text);
@@ -124,6 +153,8 @@ public class Page1 extends Activity {
                 }
             });
         }
+       // View q = findViewById(R.id.loading_spinner);
+
     }
 
     public void prevGif(View view){
