@@ -119,7 +119,7 @@ public class Page1 extends Activity {
                     break;
             }
 
-            keyword = "movie " + keyword;
+           // keyword = "movie " + keyword;
             text2.setText("True counter: " + trueCounter + "/" + count);
             count++;
 
