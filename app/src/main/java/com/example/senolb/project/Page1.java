@@ -39,8 +39,8 @@ public class Page1 extends Activity {
         String numm = num +"";
 
         ApiInterfaceMovie service = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
-        float vote = (float) 8.9;
-        Call<JsonResponse2> movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7",numm); // insert queries
+        float vote = (float) 5.9;
+        Call<JsonResponse2> movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7","1",vote); // insert queries
         movieList.enqueue(new Callback<JsonResponse2>() {
             @Override
             public void onResponse(Call<JsonResponse2> call, Response<JsonResponse2> response) {
@@ -48,15 +48,16 @@ public class Page1 extends Activity {
                     int i = 0;
                     for (Result result : response.body().getResults()) {
                         // remove the part after ":" and add to array
-                        int ind =result.getOriginalTitle().indexOf(":");
-                        if ( ind != -1) {
-                            String str = result.getOriginalTitle().substring(0,ind);
-                            titles[i] = str;
+                        if(result.getOriginalLanguage().equals("en")){
+                            int ind = result.getOriginalTitle().indexOf(":");
+                            if (ind != -1) {
+                                String str = result.getOriginalTitle().substring(0, ind);
+                                titles[i] = str;
+                            } else {
+                                titles[i] = result.getOriginalTitle();
+                            }
+                            i++;
                         }
-                        else {
-                            titles[i] = result.getOriginalTitle();
-                        }
-                        i++;
                         if (i>total-1) break; // reached to number of total movies
                     }
                 } else {
@@ -81,8 +82,8 @@ public class Page1 extends Activity {
     }
 
     public void request(View view) {
-     //   View v = findViewById(R.id.loading_spinner);
-      //  v.setVisibility(View.VISIBLE);
+        //   View v = findViewById(R.id.loading_spinner);
+        //  v.setVisibility(View.VISIBLE);
         Button A = (Button) findViewById(R.id.answer_1);
         Button B = (Button) findViewById(R.id.answer_2);
         Button C = (Button) findViewById(R.id.answer_3);
@@ -99,27 +100,24 @@ public class Page1 extends Activity {
             TextView text2 = (TextView) findViewById(R.id.first_text);
             String keyword = titles[count];
             answer = 1 + (int) (Math.random() * 3);
-;
+            ;
             switch (answer) {
                 case 1:
+                    fillContent(B,C);
                     A.setText(keyword);
-                    B.setText("-wrong-");
-                    C.setText("-wrong-");
                     break;
                 case 2:
-                    A.setText("-wrong-");
+                    fillContent(A,C);
                     B.setText(keyword);
-                    C.setText("-wrong-");
                     break;
                 case 3:
-                    A.setText("-wrong-");
-                    B.setText("-wrong-");
+                    fillContent(A,B);
                     C.setText(keyword);
                 default:
                     break;
             }
 
-           // keyword = "movie " + keyword;
+            // keyword = "movie " + keyword;
             text2.setText("True counter: " + trueCounter + "/" + count);
             count++;
 
@@ -155,7 +153,7 @@ public class Page1 extends Activity {
                 }
             });
         }
-       // View q = findViewById(R.id.loading_spinner);
+        // View q = findViewById(R.id.loading_spinner);
 
     }
 
@@ -202,6 +200,16 @@ public class Page1 extends Activity {
 
 
     }
+    public Button getAnswer(){
+        if (answer == 1)
+            return (Button) findViewById(R.id.answer_1);
+        else if (answer == 2)
+            return (Button) findViewById(R.id.answer_2);
+        else if (answer == 3)
+            return (Button) findViewById(R.id.answer_3);
+        else return null;
+
+    }
 
     public void trueAnswer(int id, final View view) {
         trueCounter++;
@@ -218,6 +226,7 @@ public class Page1 extends Activity {
     public void falseAnswer(int id, final View view){
         Button falseButton = (Button) findViewById(id);
         falseButton.setBackgroundResource(R.drawable.falsebuttonshape);
+        getAnswer().setBackgroundResource(R.drawable.truebuttonshape);
 
         mHandler.postDelayed(new Runnable() {
             public void run() {
@@ -225,5 +234,39 @@ public class Page1 extends Activity {
             }
         }, 1500);
     }
-}
 
+    public void fillContent(final Button b1, final Button b2){
+
+        int num = 1+(int)(Math.random() * 100);
+        String n = num +"";
+
+        ApiInterfaceMovie s = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
+        Call<JsonResponse2> movieList = s.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7",n,(float)4.5); // insert queries
+        movieList.enqueue(new Callback<JsonResponse2>() {
+            @Override
+            public void onResponse(Call<JsonResponse2> call, Response<JsonResponse2> response) {
+                if (response.isSuccessful()) { //got response
+                    int i = 0;
+                    int num = 1+(int)(Math.random() * 15);
+                    if(!response.body().getResults().get(num).getOriginalLanguage().equals("en"))
+                        num = 1+(int)(Math.random() * 15);
+                    int num2 = 1+(int)(Math.random() * 15);
+                    if (num==num2 || !response.body().getResults().get(num2).getOriginalLanguage().equals("en"))
+                        num2 = 1+(int)(Math.random() * 15);
+                    b1.setText(response.body().getResults().get(num).getOriginalTitle());
+                    b2.setText(response.body().getResults().get(num2).getOriginalTitle());
+                }
+             else {
+                    //unsuccessful response
+                }
+            }
+            @Override
+            public void onFailure(Call<JsonResponse2> call, Throwable t) {
+                //display the error
+                Log.d("Error", t.getMessage());
+                TextView text2 = (TextView) findViewById(R.id.first_text);
+                text2.setText(t.getMessage());
+            }
+        });
+    }
+}

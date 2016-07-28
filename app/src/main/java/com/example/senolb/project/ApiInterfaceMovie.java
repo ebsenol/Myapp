@@ -14,9 +14,9 @@ public interface ApiInterfaceMovie {
     Call<JsonResponse2> getMovie(        //   @Query("with_genres") int genre,
                                  @Query("language") String language,
                                @Query("api_key") String key,
-                                 @Query("page") String pageNum
+                                 @Query("page") String pageNum,
                               //  @Query("sort_by") String sortType
-                              //  @Query("vote_average.gte") float vote
+                               @Query("vote_average.gte") float vote
                                //  @Query("vote_average.gte") float num
                            //      @Query("primary_release_year") String person
                                     );

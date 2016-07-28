@@ -125,8 +125,8 @@ public class ExploreGifs extends Activity {
                         Glide.with(rootView.getContext()).load(url).into(imageViewTarget);
 
                     } else { //unsuccessful response
-                      //  TextView text2 = (TextView) rootView.findViewById(R.id.first_text);
-                    //    text2.setText("sad");
+                        //  TextView text2 = (TextView) rootView.findViewById(R.id.first_text);
+                        //    text2.setText("sad");
                     }
                 }
 
