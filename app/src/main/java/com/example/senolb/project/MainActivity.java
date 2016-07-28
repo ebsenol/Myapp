@@ -29,4 +29,8 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.wikipedia.com"));
         startActivity(intent);
     }
+    public void explore(View view){
+        Intent intent = new Intent(this, ExploreGifs.class);
+        startActivity(intent);
+    }
 }

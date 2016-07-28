@@ -30,5 +30,11 @@
         android:text="Go to wikipedia"
         android:onClick="goToWiki"
         android:id="@+id/button2"/>
+    <Button
+        android:layout_height="100dp"
+        android:layout_width="100dp"
+        android:text="Explore gifs"
+        android:onClick="explore"
+        android:id="@+id/explore"/>
 
 </LinearLayout>

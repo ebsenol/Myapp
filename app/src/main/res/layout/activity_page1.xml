@@ -41,8 +41,18 @@
            android:layout_centerHorizontal="true"
            android:focusable="true"
            android:focusableInTouchMode="true"/>
- -->
-       <Button
+     -->
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Check"
+            android:onClick="check"
+            android:layout_alignParentBottom="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:id="@+id/check_button"/>
+
+    <Button
            android:layout_height="wrap_content"
            android:layout_width="wrap_content"
            android:text="Next gif"
