@@ -8,13 +8,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="#424242"
+    android:background="@drawable/bg"
     tools:context=".MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome"
+        android:text="Welcome to Giffit"
         android:textStyle="bold"
         android:id="@+id/welcomeText"
         android:textSize="40sp"
@@ -24,35 +24,46 @@
     <Button
         android:layout_height="60dp"
         android:layout_width="140dp"
-        android:background="@drawable/buttonshape"
         android:text="PLAY"
+        android:alpha="0.75"
+        style="@style/RtlUnderlay.Widget.AppCompat.ActionButton"
         android:onClick="goToPage1"
         android:id="@+id/button1"
-        android:layout_marginTop="112dp"
+        android:layout_marginTop="26dp"
         android:layout_below="@+id/welcomeText"
-        android:layout_alignStart="@+id/explore" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_height="60dp"
         android:layout_width="140dp"
-        android:background="@drawable/buttonshape"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:alpha="0.65"
         android:text="Explore gifs"
         android:onClick="explore"
         android:id="@+id/explore"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="38dp"
-        android:layout_below="@+id/button1"
-        android:layout_alignStart="@+id/quit_button" />
+        android:layout_marginBottom="40dp"
+        android:layout_above="@+id/quit_button"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="140dp"
         android:layout_height="60dp"
         android:onClick="quit"
-        android:background="@drawable/buttonshape"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:alpha="0.65"
         android:text="Quit"
         android:id="@+id/quit_button"
-        android:layout_marginBottom="88dp"
+        android:layout_marginBottom="48dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/welcomeText" />
+        android:layout_alignStart="@+id/explore" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="160dp"
+        style="@style/Base.Widget.AppCompat.Spinner"
+        android:layout_height="50dp"
+    android:layout_below="@+id/button1"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

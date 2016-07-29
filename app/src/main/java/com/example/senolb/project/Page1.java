@@ -8,11 +8,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import retrofit2.Response;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.bumptech.glide.request.target.Target;
+
+import java.io.InputStream;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -20,7 +28,7 @@ public class Page1 extends Activity {
 
     public String prevUrl="";
     public String url ="";
-    final public int total = 10;                    //total num of gifs to be shown
+    final public int total = 15;                    //total num of gifs to be shown
     public String[] titles = new String[total];     //to hold movie titles
     public int count = 0;                           //index of current movie
     public int answer = -1;
@@ -40,7 +48,7 @@ public class Page1 extends Activity {
 
         ApiInterfaceMovie service = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
         float vote = (float) 5.9;
-        Call<JsonResponse2> movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7","1",vote); // insert queries
+        Call<JsonResponse2> movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7",numm,vote); // insert queries
         movieList.enqueue(new Callback<JsonResponse2>() {
             @Override
             public void onResponse(Call<JsonResponse2> call, Response<JsonResponse2> response) {
@@ -82,6 +90,7 @@ public class Page1 extends Activity {
     }
 
     public void request(View view) {
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
         //   View v = findViewById(R.id.loading_spinner);
         //  v.setVisibility(View.VISIBLE);
         Button A = (Button) findViewById(R.id.answer_1);
@@ -93,6 +102,7 @@ public class Page1 extends Activity {
 
         if (count == total){ // go to main page if total count is reached
             Intent intent = new Intent(this, MainActivity.class);
+
             startActivity(intent);
         }
         else {
@@ -103,21 +113,21 @@ public class Page1 extends Activity {
             ;
             switch (answer) {
                 case 1:
-                    fillContent(B,C);
-                    A.setText(keyword);
+                    fillContent(B,C,A,keyword);
+                    //A.setText(keyword);
                     break;
                 case 2:
-                    fillContent(A,C);
-                    B.setText(keyword);
+                    fillContent(A,C,B,keyword);
+                  //  B.setText(keyword);
                     break;
                 case 3:
-                    fillContent(A,B);
-                    C.setText(keyword);
+                    fillContent(A,B,C,keyword);
+                    //C.setText(keyword);
                 default:
                     break;
             }
 
-            // keyword = "movie " + keyword;
+            keyword = keyword + " movie";
             text2.setText("True counter: " + trueCounter + "/" + count);
             count++;
 
@@ -133,11 +143,28 @@ public class Page1 extends Activity {
                         Data data = response.body().getData();
                         prevUrl = url;
                         url = data.getImageOriginalUrl();
-
+                        progressBar.setVisibility(View.VISIBLE);
                         //display the gif
                         ImageView imageView = (ImageView) findViewById(R.id.imageView1);
                         GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
-                        Glide.with(getApplicationContext()).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageViewTarget);
+                        Glide
+                                .with(getApplicationContext())
+                                .load(url)
+                                .error(R.drawable.bg)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .listener(new RequestListener<String, GlideDrawable>() {
+                                    @Override
+                                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        return false;
+                                    }
+                                })
+                                .into(imageViewTarget);
 
                     } else { //unsuccessful response
                         TextView text2 = (TextView) findViewById(R.id.first_text);
@@ -181,9 +208,7 @@ public class Page1 extends Activity {
 
 
 
-    public void check(View view) {
-        TextView text2=(TextView) findViewById(R.id.first_text);
-        //text2.setText("check" + count);
+    public void check(View view) { // checks if the answer is true or false
         if ( answer == 1 && R.id.answer_1 == view.getId()){
             trueAnswer(R.id.answer_1,view);
         }
@@ -235,7 +260,7 @@ public class Page1 extends Activity {
         }, 1500);
     }
 
-    public void fillContent(final Button b1, final Button b2){
+    public void fillContent(final Button b1, final Button b2, final Button trueButton, final String keyword){
 
         int num = 1+(int)(Math.random() * 100);
         String n = num +"";
@@ -255,6 +280,7 @@ public class Page1 extends Activity {
                         num2 = 1+(int)(Math.random() * 15);
                     b1.setText(response.body().getResults().get(num).getOriginalTitle());
                     b2.setText(response.body().getResults().get(num2).getOriginalTitle());
+                    trueButton.setText(keyword);
                 }
              else {
                     //unsuccessful response
