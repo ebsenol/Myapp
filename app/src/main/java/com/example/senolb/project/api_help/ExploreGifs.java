@@ -1,4 +1,4 @@
-package com.example.senolb.project;
+package com.example.senolb.project.api_help;
 
 
 import android.app.Activity;
@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.example.senolb.project.R;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

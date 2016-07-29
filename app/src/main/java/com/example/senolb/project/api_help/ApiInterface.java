@@ -1,13 +1,11 @@
-package com.example.senolb.project;
+package com.example.senolb.project.api_help;
 
-import java.util.List;
+import com.example.senolb.project.api_help.JsonResponse;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -16,10 +14,10 @@ import retrofit2.http.Query;
 public interface ApiInterface {
     @GET("gifs/random")
     Call<JsonResponse> getGif(@Query("api_key") String key,
-                                    @Query("fmt") String format,
-                                    @Query("tag") String tag
-                                    //@Query("q") String type,
-                                    //@Query("limit") String limit
+                              @Query("fmt") String format,
+                              @Query("tag") String tag
+                              //@Query("q") String type,
+                              //@Query("limit") String limit
     );
     @GET("stickers/random")
     Call<JsonResponse> getSticker( @Query("api_key") String key,

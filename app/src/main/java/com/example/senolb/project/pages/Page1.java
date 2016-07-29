@@ -1,4 +1,4 @@
-package com.example.senolb.project;
+package com.example.senolb.project.pages;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,16 +10,25 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import retrofit2.Response;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.Target;
-
-import java.io.InputStream;
+import com.example.senolb.project.ListInterface;
+import com.example.senolb.project.api_help.ApiInterface;
+import com.example.senolb.project.api_help.ApiInterfaceMovie;
+import com.example.senolb.project.api_help.Data;
+import com.example.senolb.project.api_help.JsonResponse;
+import com.example.senolb.project.api_help.JsonResponse2;
+import com.example.senolb.project.R;
+import com.example.senolb.project.api_help.Result;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -100,12 +109,11 @@ public class Page1 extends Activity {
         B.setBackgroundResource(R.drawable.buttonshape);
         C.setBackgroundResource(R.drawable.buttonshape);
 
-        if (count == total){ // go to main page if total count is reached
+        if (count == total) { // go to main page if total count is reached
             Intent intent = new Intent(this, MainActivity.class);
 
             startActivity(intent);
-        }
-        else {
+        } else {
             //get the movie title from array
             TextView text2 = (TextView) findViewById(R.id.first_text);
             String keyword = titles[count];
@@ -113,15 +121,15 @@ public class Page1 extends Activity {
             ;
             switch (answer) {
                 case 1:
-                    fillContent(B,C,A,keyword);
+                    fillContent(B, C, A, keyword);
                     //A.setText(keyword);
                     break;
                 case 2:
-                    fillContent(A,C,B,keyword);
-                  //  B.setText(keyword);
+                    fillContent(A, C, B, keyword);
+                    //  B.setText(keyword);
                     break;
                 case 3:
-                    fillContent(A,B,C,keyword);
+                    fillContent(A, B, C, keyword);
                     //C.setText(keyword);
                 default:
                     break;
@@ -164,6 +172,7 @@ public class Page1 extends Activity {
                                         return false;
                                     }
                                 })
+                                .bitmapTransform(new RoundedCornersTransformation(getApplicationContext(),10,10))
                                 .into(imageViewTarget);
 
                     } else { //unsuccessful response
@@ -179,9 +188,56 @@ public class Page1 extends Activity {
                     text2.setText(t.getMessage());
                 }
             });
-        }
-        // View q = findViewById(R.id.loading_spinner);
+        }/*
+            // View q = findViewById(R.id.loading_spinner);
+            ListInterface service = ListInterface.retrofit.create(ListInterface.class);
+            Call<com.example.senolb.project.JsonResponse> myDownsized = service.getDownsized("dc6zaTOxFJmzC", "json", "funny", "1");
 
+            myDownsized.enqueue(new Callback<com.example.senolb.project.JsonResponse>() {
+                @Override
+                public void onResponse(Call<com.example.senolb.project.JsonResponse> call, Response<com.example.senolb.project.JsonResponse> response) {
+                    if (response.isSuccessful()) {
+                        int r = (int) (Math.random() * 3);
+
+                        com.example.senolb.project.Data data = response.body().getDataList().get(r);
+                        url = data.getImages().getDownsized().getUrl();
+                        progressBar.setVisibility(View.VISIBLE);
+                        //display the gif
+                        ImageView imageView = (ImageView) findViewById(R.id.imageView1);
+                        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
+                        Glide
+                                .with(getApplicationContext())
+                                .load(url)
+                                .error(R.drawable.bg)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .listener(new RequestListener<String, GlideDrawable>() {
+                                    @Override
+                                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        return false;
+                                    }
+                                })
+                                .bitmapTransform(new RoundedCornersTransformation(getApplicationContext(), 10, 10))
+                                .into(imageViewTarget);
+
+
+                    } else {
+                        //unsuccessful response
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<com.example.senolb.project.JsonResponse> call, Throwable t) {
+                    //failed response
+                }
+            });
+
+        }*/
     }
 
     public void prevGif(View view){

@@ -1,9 +1,8 @@
 package com.example.senolb.project;
 
 /**
- * Created by senolb on 23/07/16.
+ * Created by senolb on 29/07/16.
  */
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
@@ -13,9 +12,9 @@ public class JsonResponse {
 
     @SerializedName("data")
     @Expose
-    private Data data;
+    private List<Data> dataList = new ArrayList<>();
 
-    public Data getData() {
-        return data;
+    public List<Data> getDataList() {
+        return dataList;
     }
 }
