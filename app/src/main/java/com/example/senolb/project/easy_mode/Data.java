@@ -1,4 +1,4 @@
-package com.example.senolb.project;
+package com.example.senolb.project.easy_mode;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

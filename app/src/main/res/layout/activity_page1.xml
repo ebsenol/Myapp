@@ -6,17 +6,16 @@
     android:orientation="vertical"
     android:background="@drawable/bg"
     android:id="@+id/lay"
-    tools:context="com.example.senolb.project.Page1">
+    tools:context=".pages.Page1">
 
     <ImageView
         android:id="@+id/imageView1"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/answer_1"
-        android:layout_alignParentTop="true"
         android:layout_alignEnd="@+id/progress"
-        android:layout_alignStart="@+id/progress" />
+        android:layout_alignStart="@+id/progress"
+        android:layout_alignParentTop="true" />
     <!--   <ProgressBar android:id="@+id/loading_spinner"
          style="?android:progressBarStyleLarge"
          android:layout_width="wrap_content"

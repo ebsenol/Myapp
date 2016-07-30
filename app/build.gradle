@@ -23,6 +23,7 @@ dependencies {
     //compile 'com.google.code.gson:gson:2.6.2'
     //compile 'com.android.support:support-v4:19.1.0'
     compile 'com.android.support:appcompat-v7:24.1.0'
+    compile 'jp.wasabeef:glide-transformations:2.0.1'
     compile 'com.android.support:support-v4:24.1.0'
     compile 'com.android.support:recyclerview-v7:24.1.0'
     compile 'org.glassfish:javax.annotation:10.0-b28'

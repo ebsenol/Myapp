@@ -1,8 +1,8 @@
 package com.example.senolb.project.pages;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.app.Activity;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -11,27 +11,27 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
-import retrofit2.Response;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.Target;
+import com.example.senolb.project.R;
 import com.example.senolb.project.api_help.ApiInterface;
 import com.example.senolb.project.api_help.ApiInterfaceMovie;
 import com.example.senolb.project.api_help.Data;
 import com.example.senolb.project.api_help.JsonResponse;
 import com.example.senolb.project.api_help.JsonResponse2;
-import com.example.senolb.project.R;
 import com.example.senolb.project.api_help.Result;
+import com.example.senolb.project.easy_mode.ListInterface;
 
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
-public class Page1 extends Activity {
-
+public class EasyMode extends Activity {
     public String prevUrl="";
     public String url ="";
     final public int total = 15;                    //total num of gifs to be shown
@@ -42,14 +42,12 @@ public class Page1 extends Activity {
     public int trueCounter=0;
 
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_page1);
-
+        setContentView(R.layout.activity_easy_mode);
         // call the movie api\
         int num = 1+(int)(Math.random() * 100);
-        TextView text2 = (TextView) findViewById(R.id.first_text);
-
         String numm = num +"";
 
         ApiInterfaceMovie service = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
@@ -82,37 +80,26 @@ public class Page1 extends Activity {
             public void onFailure(Call<JsonResponse2> call, Throwable t) {
                 //display the error
                 Log.d("Error", t.getMessage());
-                TextView text2 = (TextView) findViewById(R.id.first_text);
-                text2.setText(t.getMessage());
             }
         });
     }
-    public void showName(View view){ //show name of the current gif
-        TextView text2= (TextView)findViewById(R.id.first_text);
-        if (count==0) // if there is no gif
-            text2.setText("--no title--");
-        else
-            text2.setText(titles[count-1]);
-    }
 
     public void request(View view) {
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress2);
         //   View v = findViewById(R.id.loading_spinner);
         //  v.setVisibility(View.VISIBLE);
-        Button A = (Button) findViewById(R.id.answer_1);
-        Button B = (Button) findViewById(R.id.answer_2);
-        Button C = (Button) findViewById(R.id.answer_3);
+        Button A = (Button) findViewById(R.id.ezanswer_1);
+        Button B = (Button) findViewById(R.id.ezanswer_2);
+        Button C = (Button) findViewById(R.id.ezanswer_3);
         A.setBackgroundResource(R.drawable.buttonshape);
         B.setBackgroundResource(R.drawable.buttonshape);
         C.setBackgroundResource(R.drawable.buttonshape);
 
         if (count == total) { // go to main page if total count is reached
             Intent intent = new Intent(this, MainActivity.class);
-
             startActivity(intent);
         } else {
             //get the movie title from array
-            TextView text2 = (TextView) findViewById(R.id.first_text);
             String keyword = titles[count];
             answer = 1 + (int) (Math.random() * 3);
             ;
@@ -133,24 +120,25 @@ public class Page1 extends Activity {
             }
 
             keyword = keyword + " movie";
-            text2.setText("True counter: " + trueCounter + "/" + count);
             count++;
 
             //call gif api
-            ApiInterface service = ApiInterface.retrofit.create(ApiInterface.class);
-            Call<JsonResponse> myDownsized = service.getGif("dc6zaTOxFJmzC", "json", keyword); // api key, format, tag
+            ListInterface service = ListInterface.retrofit.create(ListInterface.class);
+            Call<com.example.senolb.project.easy_mode.JsonResponse> myDownsized = service.getDownsized("dc6zaTOxFJmzC", "json", keyword,"5"); // api key, format, tag
 
-            myDownsized.enqueue(new Callback<JsonResponse>() {
+            myDownsized.enqueue(new Callback<com.example.senolb.project.easy_mode.JsonResponse>() {
                 @Override
-                public void onResponse(Call<JsonResponse> call, Response<JsonResponse> response) {
+                public void onResponse(Call<com.example.senolb.project.easy_mode.JsonResponse> call,
+                                       Response<com.example.senolb.project.easy_mode.JsonResponse> response) {
                     if (response.isSuccessful()) {
                         //get the data
-                        Data data = response.body().getData();
-                        prevUrl = url;
-                        url = data.getImageOriginalUrl();
+                        int n = (int)(Math.random() * 4);
+                        com.example.senolb.project.easy_mode.Data data = response.body().getDataList().get(n);
+
+                        url = data.getImages().getDownsized().getUrl();
                         progressBar.setVisibility(View.VISIBLE);
                         //display the gif
-                        ImageView imageView = (ImageView) findViewById(R.id.imageView1);
+                        ImageView imageView = (ImageView) findViewById(R.id.imageView2);
                         GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
                         Glide
                                 .with(getApplicationContext())
@@ -173,54 +161,27 @@ public class Page1 extends Activity {
                                 .into(imageViewTarget);
 
                     } else { //unsuccessful response
-                        TextView text2 = (TextView) findViewById(R.id.first_text);
-                        text2.setText("sad");
+
                     }
                 }
 
                 @Override
-                public void onFailure(Call<JsonResponse> call, Throwable t) {
+                public void onFailure(Call<com.example.senolb.project.easy_mode.JsonResponse> call, Throwable t) {
                     Log.d("Error", t.getMessage());
-                    TextView text2 = (TextView) findViewById(R.id.first_text);
-                    text2.setText(t.getMessage());
                 }
             });
         }
     }
 
-    public void prevGif(View view){
-        TextView text2 = (TextView) findViewById(R.id.first_text);
-        text2.setText("1");
-        ImageView imageView = (ImageView) findViewById(R.id.imageView1);
-        text2.setText("2");
-        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
-        text2.setText("3");
-        Glide.with(getApplicationContext()).load(prevUrl).into(imageViewTarget);
-        text2.setText("4");
-    }
-
-    public void getMovie(View view){
-
-        //  myGif.execute();
-    }
- /*   public void goBack(View view){
-        Intent intent = new Intent(this, MainActivity.class);
-        //String message = editText.getText().toString();
-        startActivity(intent);
-    }*/
-
-
-
-
     public void check(View view) { // checks if the answer is true or false
-        if ( answer == 1 && R.id.answer_1 == view.getId()){
-            trueAnswer(R.id.answer_1,view);
+        if ( answer == 1 && R.id.ezanswer_1 == view.getId()){
+            trueAnswer(R.id.ezanswer_1,view);
         }
-        else if ( answer == 2 && R.id.answer_2 == view.getId()){
-            trueAnswer(R.id.answer_2,view);
+        else if ( answer == 2 && R.id.ezanswer_2 == view.getId()){
+            trueAnswer(R.id.ezanswer_2,view);
         }
-        else if ( answer == 3 && R.id.answer_3 == view.getId()){
-            trueAnswer(R.id.answer_3,view);
+        else if ( answer == 3 && R.id.ezanswer_3 == view.getId()){
+            trueAnswer(R.id.ezanswer_3,view);
         }
         else if ( answer == -1 ){ //first click
             request(view);
@@ -231,11 +192,11 @@ public class Page1 extends Activity {
     }
     public Button getAnswer(){
         if (answer == 1)
-            return (Button) findViewById(R.id.answer_1);
+            return (Button) findViewById(R.id.ezanswer_1);
         else if (answer == 2)
-            return (Button) findViewById(R.id.answer_2);
+            return (Button) findViewById(R.id.ezanswer_2);
         else if (answer == 3)
-            return (Button) findViewById(R.id.answer_3);
+            return (Button) findViewById(R.id.ezanswer_3);
         else return null;
 
     }
@@ -286,7 +247,7 @@ public class Page1 extends Activity {
                     b2.setText(response.body().getResults().get(num2).getOriginalTitle());
                     trueButton.setText(keyword);
                 }
-             else {
+                else {
                     //unsuccessful response
                 }
             }
@@ -299,4 +260,5 @@ public class Page1 extends Activity {
             }
         });
     }
+
 }

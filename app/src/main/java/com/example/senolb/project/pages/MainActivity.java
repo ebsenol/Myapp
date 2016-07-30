@@ -57,6 +57,10 @@ public class MainActivity extends Activity {
         //String message = editText.getText().toString();
         startActivity(intent);
     }
+    public void easyMode(View view){
+        Intent intent = new Intent(this, EasyMode.class);
+        startActivity(intent);
+    }
     public void goToWiki(View view){
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.wikipedia.com"));
         startActivity(intent);

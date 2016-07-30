@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Project.iml" filepath="$PROJECT_DIR$/../Project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app.iml" filepath="$PROJECT_DIR$/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../gson-2.7-javadoc/gson-2.7-javadoc.iml" filepath="$PROJECT_DIR$/../gson-2.7-javadoc/gson-2.7-javadoc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../javax.annotation/javax.annotation.iml" filepath="$PROJECT_DIR$/../javax.annotation/javax.annotation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../retrofit-2.1.0/retrofit-2.1.0.iml" filepath="$PROJECT_DIR$/../retrofit-2.1.0/retrofit-2.1.0.iml" />
+    </modules>
+  </component>
+</project>
