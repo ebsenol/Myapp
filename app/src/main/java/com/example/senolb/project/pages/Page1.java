@@ -54,7 +54,20 @@ public class Page1 extends Activity {
 
         ApiInterfaceMovie service = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
         float vote = (float) 5.9;
-        Call<JsonResponse2> movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7",numm,vote); // insert queries
+        String genre = getIntent().getExtras().getString("genre");
+        Call<JsonResponse2> movieList;
+        if (genre.equals("3")){  // get drama
+            movieList = service.getMovieWithGenre(18,"en","052ab3ed3f1f39a747fc24b817ee31e7",numm,vote);
+        }
+        else if (genre.equals("2")){ // get animation
+            movieList = service.getMovieWithGenre(16,"en","052ab3ed3f1f39a747fc24b817ee31e7",numm,vote);
+        }
+        else if (genre.equals("1")){ // get action movies
+            movieList = service.getMovieWithGenre(28,"en","052ab3ed3f1f39a747fc24b817ee31e7",numm,vote);
+        }
+        else //default case
+           movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7",numm,vote); // insert queries
+
         movieList.enqueue(new Callback<JsonResponse2>() {
             @Override
             public void onResponse(Call<JsonResponse2> call, Response<JsonResponse2> response) {

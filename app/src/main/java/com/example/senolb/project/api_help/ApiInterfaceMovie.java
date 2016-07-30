@@ -22,6 +22,17 @@ public interface ApiInterfaceMovie {
                                          //  @Query("vote_average.gte") float num
                                          //      @Query("primary_release_year") String person
                                     );
+
+    @GET("movie")
+    Call<JsonResponse2> getMovieWithGenre(@Query("with_genres") int genre,
+                                         @Query("language") String language,
+                                         @Query("api_key") String key,
+                                         @Query("page") String pageNum,
+                                         //  @Query("sort_by") String sortType
+                                         @Query("vote_average.gte") float vote
+                                         //  @Query("vote_average.gte") float num
+                                         //      @Query("primary_release_year") String person
+    );
     Retrofit retrofit2 = new Retrofit.Builder()
             .baseUrl("https://api.themoviedb.org/3/discover/")
             .addConverterFactory(GsonConverterFactory.create())
