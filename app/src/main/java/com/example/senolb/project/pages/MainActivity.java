@@ -72,6 +72,7 @@ public class MainActivity extends Activity {
     }
     public void easyMode(View view){
         Intent intent = new Intent(this, EasyMode.class);
+        intent.putExtra("genre",genre+"");
         startActivity(intent);
     }
     public void goToWiki(View view){

@@ -45,9 +45,8 @@
     android:shadowDx="0"
     android:shadowDy="0"
     android:shadowRadius="5"
-    android:layout_above="@+id/ezanswer_2"
-    android:layout_alignStart="@+id/ezanswer_2"
-    android:layout_alignEnd="@+id/ezanswer_2" />
+        android:layout_above="@+id/ezanswer_2"
+        android:layout_centerHorizontal="true" />
 
 <Button
     android:id="@+id/ezanswer_2"
@@ -63,7 +62,8 @@
     android:shadowDx="0"
     android:shadowDy="0"
     android:layout_above="@+id/ezanswer_3"
-    android:layout_centerHorizontal="true" />
+    android:layout_alignEnd="@+id/ezanswer_1"
+    android:layout_alignStart="@+id/ezanswer_1" />
 
 <Button
     android:id="@+id/ezanswer_3"
@@ -79,6 +79,7 @@
     android:shadowDx="0"
     android:shadowDy="0"
     android:layout_alignParentBottom="true"
-    android:layout_alignStart="@+id/ezanswer_2" />
+    android:layout_alignStart="@+id/ezanswer_2"
+    android:layout_alignEnd="@+id/ezanswer_2" />
 </RelativeLayout>
 
