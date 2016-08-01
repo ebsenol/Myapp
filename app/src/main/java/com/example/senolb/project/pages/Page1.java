@@ -47,9 +47,7 @@ public class Page1 extends Activity {
         setContentView(R.layout.activity_page1);
 
         // call the movie api\
-        int num = 1+(int)(Math.random() * 100);
-        TextView text2 = (TextView) findViewById(R.id.first_text);
-
+        int num = 1+(int)(Math.random() * 100); // get the page number for api
         String numm = num +"";
 
         ApiInterfaceMovie service = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
@@ -74,7 +72,7 @@ public class Page1 extends Activity {
                 if (response.isSuccessful()) { //got response
                     int i = 0;
                     for (Result result : response.body().getResults()) {
-                        // remove the part after ":" and add to array
+                        // remove the part after ":" and add to the array
                         if(result.getOriginalLanguage().equals("en")){
                             int ind = result.getOriginalTitle().indexOf(":");
                             if (ind != -1) {
@@ -87,6 +85,7 @@ public class Page1 extends Activity {
                         }
                         if (i>total-1) break; // reached to number of total movies
                     }
+                    request(getCurrentFocus()); // TODO gives graphical corruption error but runs , why?
                 } else {
                     //unsuccessful response
                 }
@@ -95,8 +94,6 @@ public class Page1 extends Activity {
             public void onFailure(Call<JsonResponse2> call, Throwable t) {
                 //display the error
                 Log.d("Error", t.getMessage());
-                TextView text2 = (TextView) findViewById(R.id.first_text);
-                text2.setText(t.getMessage());
             }
         });
     }
@@ -115,20 +112,18 @@ public class Page1 extends Activity {
         Button A = (Button) findViewById(R.id.answer_1);
         Button B = (Button) findViewById(R.id.answer_2);
         Button C = (Button) findViewById(R.id.answer_3);
-        A.setBackgroundResource(R.drawable.buttonshape);
+        A.setBackgroundResource(R.drawable.buttonshape); // make the buttons default color again
         B.setBackgroundResource(R.drawable.buttonshape);
         C.setBackgroundResource(R.drawable.buttonshape);
 
         if (count == total) { // go to main page if total count is reached
             Intent intent = new Intent(this, MainActivity.class);
-
             startActivity(intent);
         } else {
             //get the movie title from array
             TextView text2 = (TextView) findViewById(R.id.first_text);
             String keyword = titles[count];
-            answer = 1 + (int) (Math.random() * 3);
-            ;
+            answer = 1 + (int) (Math.random() * 3); //set the answer
             switch (answer) {
                 case 1:
                     fillContent(B, C, A, keyword);
@@ -161,7 +156,7 @@ public class Page1 extends Activity {
                         Data data = response.body().getData();
                         prevUrl = url;
                         url = data.getImageOriginalUrl();
-                        progressBar.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.VISIBLE); //start spinning
                         //display the gif
                         ImageView imageView = (ImageView) findViewById(R.id.imageView1);
                         GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
@@ -178,7 +173,7 @@ public class Page1 extends Activity {
 
                                     @Override
                                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                        progressBar.setVisibility(View.INVISIBLE);
+                                        progressBar.setVisibility(View.INVISIBLE); //end spinning, gif is ready
                                         return false;
                                     }
                                 })
@@ -186,22 +181,19 @@ public class Page1 extends Activity {
                                 .into(imageViewTarget);
 
                     } else { //unsuccessful response
-                        TextView text2 = (TextView) findViewById(R.id.first_text);
-                        text2.setText("sad");
+
                     }
                 }
 
                 @Override
                 public void onFailure(Call<JsonResponse> call, Throwable t) {
                     Log.d("Error", t.getMessage());
-                    TextView text2 = (TextView) findViewById(R.id.first_text);
-                    text2.setText(t.getMessage());
                 }
             });
         }
     }
 
-    public void prevGif(View view){
+ /*   public void prevGif(View view) {
         TextView text2 = (TextView) findViewById(R.id.first_text);
         text2.setText("1");
         ImageView imageView = (ImageView) findViewById(R.id.imageView1);
@@ -211,11 +203,7 @@ public class Page1 extends Activity {
         Glide.with(getApplicationContext()).load(prevUrl).into(imageViewTarget);
         text2.setText("4");
     }
-
-    public void getMovie(View view){
-
-        //  myGif.execute();
-    }
+    */
  /*   public void goBack(View view){
         Intent intent = new Intent(this, MainActivity.class);
         //String message = editText.getText().toString();
@@ -307,8 +295,6 @@ public class Page1 extends Activity {
             public void onFailure(Call<JsonResponse2> call, Throwable t) {
                 //display the error
                 Log.d("Error", t.getMessage());
-                TextView text2 = (TextView) findViewById(R.id.first_text);
-                text2.setText(t.getMessage());
             }
         });
     }

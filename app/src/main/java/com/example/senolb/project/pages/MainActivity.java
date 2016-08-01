@@ -16,16 +16,12 @@ public class MainActivity extends Activity {
     private Spinner spinner;
     private static final String[]paths = {"Choose a genre", "Action","Animation","Drama"};
     int genre = 4;
-    @Override
-    protected void onResume(){
-        super.onResume();
-        genre =4;
-    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         spinner = (Spinner)findViewById(R.id.spinner);
         ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,
@@ -60,8 +56,12 @@ public class MainActivity extends Activity {
 
             }
         });
+    }
 
-
+    @Override
+    protected void onResume(){
+        super.onResume();
+        genre =4;
     }
 
     public void goToPage1(View view){
@@ -75,10 +75,7 @@ public class MainActivity extends Activity {
         intent.putExtra("genre",genre+"");
         startActivity(intent);
     }
-    public void goToWiki(View view){
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.wikipedia.com"));
-        startActivity(intent);
-    }
+
     public void explore(View view){
         Intent intent = new Intent(this, ExploreGifs.class);
         startActivity(intent);

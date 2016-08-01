@@ -85,6 +85,7 @@ public class EasyMode extends Activity {
                         }
                         if (i>total-1) break; // reached to number of total movies
                     }
+                     request(getCurrentFocus());
                 } else {
                     //unsuccessful response
                 }

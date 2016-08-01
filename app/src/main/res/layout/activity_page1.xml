@@ -70,7 +70,7 @@
         android:text="A"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        android:layout_width="330dp"
+        android:layout_width="350dp"
         android:layout_height="50dp"
         style="@style/Widget.AppCompat.Button.Colored"
         android:alpha="0.65"
