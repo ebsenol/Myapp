@@ -1,4 +1,4 @@
-package com.example.senolb.project.easy_mode;
+package com.example.senolb.project.easymodegif;
 
 /**
  * Created by senolb on 29/07/16.

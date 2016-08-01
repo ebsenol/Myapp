@@ -1,6 +1,4 @@
-package com.example.senolb.project.api_help;
-
-import com.example.senolb.project.api_help.JsonResponse;
+package com.example.senolb.project.normalmodegif;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;

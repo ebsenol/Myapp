@@ -1,5 +1,6 @@
-package com.example.senolb.project.api_help;
+package com.example.senolb.project.movie;
 
+import com.example.senolb.project.normalmodegif.Data;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

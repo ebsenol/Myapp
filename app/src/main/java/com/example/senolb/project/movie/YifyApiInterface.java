@@ -1,4 +1,4 @@
-package com.example.senolb.project.api_help;
+package com.example.senolb.project.movie;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;

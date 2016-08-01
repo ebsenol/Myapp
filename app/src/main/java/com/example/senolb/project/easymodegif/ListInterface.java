@@ -1,4 +1,4 @@
-package com.example.senolb.project.easy_mode;
+package com.example.senolb.project.easymodegif;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;

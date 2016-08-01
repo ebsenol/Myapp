@@ -1,10 +1,12 @@
-package com.example.senolb.project.easy_mode;
+package com.example.senolb.project.easymodegif;
 
 /**
  * Created by senolb on 29/07/16.
  */
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 

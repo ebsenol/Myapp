@@ -1,12 +1,12 @@
-package com.example.senolb.project.api_help;
+package com.example.senolb.project.movie;
 
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,9 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.example.senolb.project.R;
+import com.example.senolb.project.normalmodegif.ApiInterface;
+import com.example.senolb.project.normalmodegif.Data;
+import com.example.senolb.project.normalmodegif.JsonResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;

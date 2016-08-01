@@ -1,4 +1,4 @@
-package com.example.senolb.project.api_help;
+package com.example.senolb.project.normalmodegif;
 
 /**
  * Created by senolb on 23/07/16.

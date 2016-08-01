@@ -20,20 +20,17 @@
         android:label="app"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".pages.MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".pages.Page1" />
+        <activity android:name=".activities.QuizActivity" />
         <activity
-            android:name=".api_help.ExploreGifs"
+            android:name=".movie.ExploreGifs"
             android:label="@string/title_activity_explore_gifs" />
-        <activity
-            android:name=".pages.EasyMode"
-            android:label="@string/title_activity_easy_mode"></activity>
     </application>
 
 </manifest>

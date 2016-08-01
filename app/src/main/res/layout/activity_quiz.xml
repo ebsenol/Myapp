@@ -6,30 +6,21 @@
     android:orientation="vertical"
     android:background="@drawable/bg"
     android:id="@+id/lay"
-    tools:context=".pages.Page1">
+    tools:context=".activities.QuizActivity">
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/imageViewGif"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/answer_1"
         android:layout_alignEnd="@+id/progress"
         android:layout_alignStart="@+id/progress"
         android:layout_alignParentTop="true" />
-    <!--   <ProgressBar android:id="@+id/loading_spinner"
-         style="?android:progressBarStyleLarge"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:pivotX="50%"
-         android:pivotY="50%"
-         android:layout_gravity="center"
-         android:scaleType="fitCenter"/>
- -->
+
     <ProgressBar
         style="@style/Base.Widget.AppCompat.ProgressBar"
         android:id="@+id/progress"
         android:indeterminate="true"
-
         android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -46,24 +37,7 @@
         android:scaleType="fitCenter"
         android:textSize="30sp"
         android:layout_alignParentStart="true" />
-    <!--
-      <EditText
-           android:id="@+id/first_number"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:hint="@string/number_hint"
-           android:textColor="#FFFFFF"
-           android:layout_marginTop="5dip"
-           android:cursorVisible="true"
-           android:ems="10"
-           android:scaleType="fitCenter"
-           android:layout_gravity="center_vertical"
-           android:layout_alignParentBottom="true"
-           android:layout_marginBottom="@dimen/activity_horizontal_margin"
-           android:layout_centerHorizontal="true"
-           android:focusable="true"
-           android:focusableInTouchMode="true"/>
-     -->
+
     <Button
         android:id="@+id/answer_1"
         android:onClick="check"
@@ -116,23 +90,4 @@
         android:layout_alignEnd="@+id/answer_2"
         android:layout_alignStart="@+id/answer_2" />
 
-    <!--
-    <Button
-           android:layout_height="wrap_content"
-           android:layout_width="wrap_content"
-           android:text="Next gif"
-           android:onClick="request"
-           android:layout_alignParentBottom="true"
-           android:layout_alignParentRight="true"
-           android:layout_marginBottom="@dimen/activity_horizontal_margin"
-           android:id="@+id/movie_button"/>
-       <Button
-           android:layout_height="wrap_content"
-           android:layout_width="wrap_content"
-           android:text="Show the Title"
-           android:onClick="showName"
-           android:id="@+id/prev"
-           android:layout_below="@+id/answer_3"
-           android:layout_alignParentStart="true" />
- -->
 </RelativeLayout>

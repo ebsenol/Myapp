@@ -1,35 +1,36 @@
-package com.example.senolb.project.pages;
+package com.example.senolb.project.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.example.senolb.project.api_help.ExploreGifs;
 import com.example.senolb.project.R;
+import com.example.senolb.project.movie.ExploreGifs;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends Activity {
-    private Spinner spinner;
+    @BindView(R.id.spinner) Spinner spin;
     private static final String[]paths = {"Choose a genre", "Action","Animation","Drama"};
     int genre = 4;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        spinner = (Spinner)findViewById(R.id.spinner);
         ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,
                 android.R.layout.simple_spinner_item,paths);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        spin.setAdapter(adapter);
+        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id)
             {
@@ -50,10 +51,8 @@ public class MainActivity extends Activity {
                 }
 
             }
-
             public void onNothingSelected(AdapterView<?> parent)
             {
-
             }
         });
     }
@@ -65,14 +64,16 @@ public class MainActivity extends Activity {
     }
 
     public void goToPage1(View view){
-        Intent intent = new Intent(this, Page1.class);
+        Intent intent = new Intent(this, QuizActivity.class);
         //String message = editText.getText().toString();
         intent.putExtra("genre",genre+"");
+        intent.putExtra("easyMode",false);
         startActivity(intent);
     }
     public void easyMode(View view){
-        Intent intent = new Intent(this, EasyMode.class);
+        Intent intent = new Intent(this, QuizActivity.class);
         intent.putExtra("genre",genre+"");
+        intent.putExtra("easyMode", false);
         startActivity(intent);
     }
 
