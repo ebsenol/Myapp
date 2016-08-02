@@ -32,7 +32,7 @@
         android:id="@+id/first_text"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:text="Press on any button to start!"
+        android:text="Loading..."
         android:textStyle="bold"
         android:scaleType="fitCenter"
         android:textSize="30sp"

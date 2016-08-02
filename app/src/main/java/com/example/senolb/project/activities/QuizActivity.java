@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -56,11 +57,18 @@ public class QuizActivity extends Activity {
         ButterKnife.bind(this);
         final boolean easyMode= getIntent().getExtras().getBoolean("easyMode");
 
+        progressBar.setVisibility(View.VISIBLE);
+        btnA.setVisibility(View.INVISIBLE);
+        btnB.setVisibility(View.INVISIBLE);
+        btnC.setVisibility(View.INVISIBLE);
+
         // call the movie api
         int num = 1+(int)(Math.random() * 100); // get the page number for api
         String page = num +"";
         ApiInterfaceMovie service = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
         float vote = (float) 5.9;
+
+
         String genre = getIntent().getExtras().getString("genre");
         Call<JsonResponse2> movieList;
         if (genre.equals("3")){  // get drama
@@ -73,33 +81,45 @@ public class QuizActivity extends Activity {
             movieList = service.getMovieWithGenre(28,"en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote);
         }
         else //default case
-           movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote); // insert queries
+           movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7","6",vote); // insert queries
 
         movieList.enqueue(new Callback<JsonResponse2>() {
             @Override
             public void onResponse(Call<JsonResponse2> call, Response<JsonResponse2> response) {
                 if (response.isSuccessful()) { //got response
                     int i = 0;
+
                     for (Result result : response.body().getResults()) {
                         // remove the part after ":" and add to the array
                         if(result.getOriginalLanguage().equals("en")){
-                            int ind = result.getOriginalTitle().indexOf(":");
-                            if (ind != -1) {
-                                String str = result.getOriginalTitle().substring(0, ind);
-                                titles[i] = str;
-                            } else {
+                           // int ind = result.getOriginalTitle().indexOf(":");
+                            //if (ind != -1) {
+                             //   String str = result.getOriginalTitle().substring(0, ind);
+                              //  titles[i] = str;
+                            //} else {
                                 titles[i] = result.getOriginalTitle();
-                            }
+                            //}
                             System.out.println(titles[i]);
                             i++;
                         }
+
                         if (i>total-1) break; // reached to number of total movies
                     }
+
                     // load 3 gifs
-                    if(easyMode) new LoadEasyGifs().execute(3);
-                    else         new LoadNormalGifs().execute(3);
+                    if(easyMode) new LoadEasyGifs(3).execute();
+                    else         new LoadNormalGifs(3).execute();
+
+                    mHandler.postDelayed(new Runnable() {
+                        public void run() {
+                            progressBar.setVisibility(View.VISIBLE);
+                            request(getCurrentFocus());
+                        }
+                    },2000);
+
 
                 } else { //unsuccessful response
+
                 }
             }
             @Override
@@ -119,10 +139,12 @@ public class QuizActivity extends Activity {
 
     public void request(View view) {
         progressBar.setVisibility(View.VISIBLE);
-
         btnA.setBackgroundResource(R.drawable.btn_normal); // make the buttons default color again
         btnB.setBackgroundResource(R.drawable.btn_normal);
         btnC.setBackgroundResource(R.drawable.btn_normal);
+        btnA.setVisibility(View.INVISIBLE);
+        btnB.setVisibility(View.INVISIBLE);
+        btnC.setVisibility(View.INVISIBLE);
 
         if (count == total) { // go to main page if total count is reached
             Intent intent = new Intent(this, MainActivity.class);
@@ -149,8 +171,11 @@ public class QuizActivity extends Activity {
             GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
 
             if( !getIntent().getExtras().getBoolean("easyMode")) { //normal mode
+
                 Glide   .with(getApplicationContext())
                         .load(urls[count-1])
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .crossFade()
                         .listener(new RequestListener<String, GlideDrawable>() {
                             @Override
                             public boolean onException(Exception e,
@@ -167,20 +192,26 @@ public class QuizActivity extends Activity {
                                                            boolean isFromMemoryCache,
                                                            boolean isFirstResource) {
                                 progressBar.setVisibility(View.INVISIBLE); //gif is ready
-                                btnA.setVisibility(View.VISIBLE);
-                                btnB.setVisibility(View.VISIBLE);
-                                btnC.setVisibility(View.VISIBLE);
                                 return false;
                             }
                         })
                         .into(imageViewTarget);
 
-                if (inCache<total)
-                    new LoadNormalGifs().execute(1); // load one gif from future :P
+                mHandler.postDelayed(new Runnable() {
+                    public void run() {
+                        btnA.setVisibility(View.VISIBLE);
+                        btnB.setVisibility(View.VISIBLE);
+                        btnC.setVisibility(View.VISIBLE);
+                    }
+                }, 1500);
+
+                if (inCache<total) new LoadNormalGifs(1).execute(); // load one gif from future :P
             }
             else { //easy mode
                 Glide   .with(getApplicationContext())
                         .load(urls[count-1])
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .crossFade(400)
                         .listener(new RequestListener<String, GlideDrawable>() {
                             @Override
                             public boolean onException(Exception e,
@@ -197,16 +228,19 @@ public class QuizActivity extends Activity {
                                                            boolean isFromMemoryCache,
                                                            boolean isFirstResource) {
                                 progressBar.setVisibility(View.INVISIBLE); //gif is ready
-                                btnA.setVisibility(View.VISIBLE);
-                                btnB.setVisibility(View.VISIBLE);
-                                btnC.setVisibility(View.VISIBLE);
                                 return false;
                             }
                         })
                         .into(imageViewTarget);
+                mHandler.postDelayed(new Runnable() {
+                    public void run() {
+                        btnA.setVisibility(View.VISIBLE);
+                        btnB.setVisibility(View.VISIBLE);
+                        btnC.setVisibility(View.VISIBLE);
+                    }
+                }, 1500);
 
-                if (inCache<total)
-                    new LoadEasyGifs().execute(1);
+                if (inCache<total) new LoadEasyGifs(1).execute();
 
             }
         }
@@ -229,6 +263,7 @@ public class QuizActivity extends Activity {
 
 
     }
+
     public Button getAnswer(){
         if (answer == 1)
             return btnA;
@@ -239,6 +274,7 @@ public class QuizActivity extends Activity {
         else return null;
 
     }
+
     public void trueAnswer(final View view) {
         trueCounter++;
         view.setBackgroundResource(R.drawable.btn_true);
@@ -250,6 +286,7 @@ public class QuizActivity extends Activity {
             }
         }, 1500);
     }
+
     public void falseAnswer(final View view){
         view.setBackgroundResource(R.drawable.btn_false);
         getAnswer().setBackgroundResource(R.drawable.btn_true);
@@ -261,6 +298,7 @@ public class QuizActivity extends Activity {
             }
         }, 1500);
     }
+
     public void fillContent(final Button b1, final Button b2, final Button trueButton, final String keyword){
 
         int num = 1+(int)(Math.random() * 100);
@@ -285,6 +323,7 @@ public class QuizActivity extends Activity {
                     b1.setText(response.body().getResults().get(num).getOriginalTitle());
                     b2.setText(response.body().getResults().get(num2).getOriginalTitle());
                     trueButton.setText(keyword);
+
                 }
              else {
                     System.out.println("ASDASD5");   //unsuccessful response
@@ -298,12 +337,16 @@ public class QuizActivity extends Activity {
             }
         });
     }
-    class LoadNormalGifs extends AsyncTask <Integer, Void, Void>{
+
+    class LoadNormalGifs extends AsyncTask <Void, Void, String>{
+        private int count;
+
+        public LoadNormalGifs(int count){
+            this.count=count;
+        }
+
         @Override
-        protected Void doInBackground(Integer... number) {
-            // Do some background work
-            for (int i = 0 ; i < number[0] ;i++){
-                //call gif api
+        protected String doInBackground(Void... voids) {
                 ApiInterface service = ApiInterface.retrofit.create(ApiInterface.class);
                 Call<JsonResponse> myDownsized = service.getGif("dc6zaTOxFJmzC", "json", titles[inCache]+" movie");
                 myDownsized.enqueue(new Callback<JsonResponse>() {
@@ -319,10 +362,16 @@ public class QuizActivity extends Activity {
                             System.out.println(titles[inCache]);
                             Glide   .with(getApplicationContext())
                                     .load(url)
-                                    //.downloadOnly(Integer.parseInt(height),Integer.parseInt(width))
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .downloadOnly(Integer.parseInt(height),Integer.parseInt(width))
+                                    //.diskCacheStrategy(DiskCacheStrategy.ALL)
                             ;
-                            inCache++;
+                            incrementInCache();
+
+                            if (count > 1){
+                                count--;
+                                callNormal(count);
+                            }
+
                         } else { //unsuccessful response
 
                         }
@@ -333,58 +382,77 @@ public class QuizActivity extends Activity {
                         Log.d("Error", t.getMessage());
                     }
                 });
-            }
             return null;
         }
     }
+    public void incrementInCache(){
+        inCache++;
+    }
+    public void callEasy(int n){
+        new LoadEasyGifs(n).execute();
+    }
+    public void callNormal(int n){
+        new LoadNormalGifs(n).execute();
+    }
 
-    class LoadEasyGifs extends AsyncTask<Integer,Void,String>{
+    class LoadEasyGifs extends AsyncTask<Void,Void,String>{
+
+        private int count;
+
+        public LoadEasyGifs(int count){
+            this.count=count;
+        }
+
         @Override
-        protected String doInBackground(Integer... number) {
+        protected String doInBackground(Void... voids) {
             // Do some background work
-            for (int i = 0 ; i < number[0] ;i++){
-                ListInterface service = ListInterface.retrofit.create(ListInterface.class);
-                Call<com.example.senolb.project.easymodegif.JsonResponse> myDownsized =
-                        service.getDownsized("dc6zaTOxFJmzC", "json", titles[inCache]+" movie","3"); // api key, format, tag
 
-                myDownsized.enqueue(new Callback<com.example.senolb.project.easymodegif.JsonResponse>(){
-                    @Override
-                    public void onResponse(Call<com.example.senolb.project.easymodegif.JsonResponse> call,
-                                           Response<com.example.senolb.project.easymodegif.JsonResponse> response) {
-                        if (response.isSuccessful()) {
-                            //get the data
-                            int n = (int)(Math.random() * 2);
-                            com.example.senolb.project.easymodegif.Data data =
-                                    response.body().getDataList().get(n);
+            ListInterface service = ListInterface.retrofit.create(ListInterface.class);
+            Call<com.example.senolb.project.easymodegif.JsonResponse> myDownsized =
+            service.getDownsized("dc6zaTOxFJmzC", "json", titles[inCache], "3"); // api key, format, tag
+            System.out.println(titles[inCache]+"---------");
+            myDownsized.enqueue(new Callback<com.example.senolb.project.easymodegif.JsonResponse>() {
+                @Override
+                public void onResponse(Call<com.example.senolb.project.easymodegif.JsonResponse> call,
+                                       Response<com.example.senolb.project.easymodegif.JsonResponse> response) {
+                    if (response.isSuccessful()) {
+                    //get the data
+                        int n = (int) (Math.random() * 2);
+                        com.example.senolb.project.easymodegif.Data data =
+                                response.body().getDataList().get(n);
 
-                            url = data.getImages().getDownsized().getUrl();
-                            urls[inCache] = url;
-                            System.out.println(titles[inCache]);
-                            String height = data.getImages().getDownsized().getHeight();
-                            String width = data.getImages().getDownsized().getWidth();
-                            Glide   .with(getApplicationContext())
-                                    .load(url)
-                                    .downloadOnly(Integer.parseInt(height),Integer.parseInt(width));
-                            inCache++;
-                        } else { //unsuccessful response
+                        url = data.getImages().getDownsized().getUrl();
+                        urls[inCache] = url;
+                        System.out.println(inCache);
+                          //  System.out.println(titles[inCache]+"---------");
+                        String height = data.getImages().getDownsized().getHeight();
+                        String width = data.getImages().getDownsized().getWidth();
+                        Glide   .with(getApplicationContext())
+                                .load(urls[inCache])
+                                .downloadOnly(Integer.parseInt(height), Integer.parseInt(width))
+                            // .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        ;
 
+                        incrementInCache();
+
+                        if (count > 1){
+                            count--;
+                            //  new LoadEasyGifs(count).execute();
+                            callEasy(count);
                         }
+                    } else { //unsuccessful response
+
                     }
-                    @Override
-                    public void onFailure(Call<com.example.senolb.project.easymodegif.JsonResponse> call,
+                }
+
+                @Override
+                public void onFailure(Call<com.example.senolb.project.easymodegif.JsonResponse> call,
                                           Throwable t) {
-                        Log.d("Error", t.getMessage());
-                    }
-                });
-            }
+                    Log.d("Error", t.getMessage());
+                }
+            });
             return null;
         }
-
-        @Override
-        protected void onPostExecute(String result) {
-            System.out.println("bitttititititiiti");
-        }
-
     }
 }
 
