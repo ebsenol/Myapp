@@ -51,8 +51,10 @@ public class MainActivity extends Activity {
                 }
 
             }
+
             public void onNothingSelected(AdapterView<?> parent)
             {
+
             }
         });
     }
@@ -73,7 +75,7 @@ public class MainActivity extends Activity {
     public void easyMode(View view){
         Intent intent = new Intent(this, QuizActivity.class);
         intent.putExtra("genre",genre+"");
-        intent.putExtra("easyMode", false);
+        intent.putExtra("easyMode", true);
         startActivity(intent);
     }
 

@@ -28,4 +28,10 @@ public class Downsized {
     public String getUrl(){
         return url;
     }
+    public String getWidth(){
+        return width;
+    }
+    public String getHeight(){
+        return height;
+    }
 }
