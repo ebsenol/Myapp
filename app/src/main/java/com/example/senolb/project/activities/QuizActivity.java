@@ -39,6 +39,7 @@ public class QuizActivity extends Activity {
     @BindView(R.id.answer_3) Button btnC;
     @BindView(R.id.progress) ProgressBar progressBar;
     @BindView(R.id.first_text) TextView mainText;
+    @BindView(R.id.counterButton) Button btnCount;
 
     public String prevUrl="";
     public String url ="";
@@ -81,7 +82,7 @@ public class QuizActivity extends Activity {
             movieList = service.getMovieWithGenre(28,"en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote);
         }
         else //default case
-           movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7","6",vote); // insert queries
+           movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote); // insert queries
 
         movieList.enqueue(new Callback<JsonResponse2>() {
             @Override
@@ -166,7 +167,8 @@ public class QuizActivity extends Activity {
                     break;
             }
 
-            mainText.setText("True counter: " + trueCounter + "/" + count);
+            btnCount.setText(trueCounter + "/" + count);
+            mainText.setText("");
             count++;
             GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
 
@@ -453,6 +455,11 @@ public class QuizActivity extends Activity {
             });
             return null;
         }
+    }
+
+    public void goHome(View view){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
 
