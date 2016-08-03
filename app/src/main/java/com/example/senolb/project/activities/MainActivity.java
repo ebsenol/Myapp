@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.example.senolb.project.R;
-import com.example.senolb.project.movie.ExploreGifs;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,6 +69,7 @@ public class MainActivity extends Activity {
         //String message = editText.getText().toString();
         intent.putExtra("genre",genre+"");
         intent.putExtra("easyMode",false);
+        overridePendingTransition(R.anim.push_left_in,R.anim.push_pop_out);
         startActivity(intent);
     }
     public void easyMode(View view){
@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
     }
 
     public void explore(View view){
-        Intent intent = new Intent(this, ExploreGifs.class);
+        Intent intent = new Intent(this, BrowseActivity.class);
         startActivity(intent);
     }
     public void quit(View view){

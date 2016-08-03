@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/bg"
     android:id="@+id/lay"
@@ -42,7 +43,6 @@
     <Button
         android:id="@+id/answer_1"
         android:onClick="check"
-        android:text="A"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:layout_width="350dp"
@@ -59,7 +59,6 @@
     <Button
         android:id="@+id/answer_2"
         android:onClick="check"
-        android:text="B"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:layout_width="280dp"
@@ -76,7 +75,6 @@
     <Button
         android:id="@+id/answer_3"
         android:onClick="check"
-        android:text="C"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:layout_width="280dp"
@@ -93,25 +91,49 @@
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="80dp"
-        android:layout_height="35dp"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
         android:id="@+id/counterButton"
         android:textColor="#FFFFFFFF"
-        android:textSize="24sp"
+        android:textSize="40sp"
         android:alpha="0.85"
         android:background="@drawable/btn_true_counter"
         android:shadowColor="#ff1b0f0f"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp" />
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@+id/toolbar" />
 
-    <ImageButton
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:alpha="0.85"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        app:titleTextColor="@android:color/white"
+        android:background="?attr/colorPrimary">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageButton"
+            android:onClick="goHome"
+            app:icon_size="55dp"
+            android:background="@drawable/home"
+            android:layout_alignStart="@+id/imageViewGif"
+            android:layout_alignTop="@+id/imageViewGif" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <com.like.LikeButton
+        app:icon_type="heart"
+        app:icon_size="40dp"
+        android:id="@+id/heart_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton"
-        android:layout_alignTop="@+id/imageViewGif"
-        android:onClick="goHome"
-        android:layout_alignParentStart="true"
-        android:layout_alignBottom="@+id/counterButton" />
+        app:anim_scale_factor="1.6"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
 
 </RelativeLayout>

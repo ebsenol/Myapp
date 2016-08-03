@@ -5,13 +5,16 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -26,13 +29,15 @@ import com.example.senolb.project.movie.Result;
 import com.example.senolb.project.normalmodegif.ApiInterface;
 import com.example.senolb.project.normalmodegif.Data;
 import com.example.senolb.project.normalmodegif.JsonResponse;
+import com.like.LikeButton;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class QuizActivity extends Activity {
+public class QuizActivity extends AppCompatActivity {
     @BindView(R.id.imageViewGif) ImageView gifView;
     @BindView(R.id.answer_1) Button btnA;
     @BindView(R.id.answer_2) Button btnB;
@@ -40,28 +45,31 @@ public class QuizActivity extends Activity {
     @BindView(R.id.progress) ProgressBar progressBar;
     @BindView(R.id.first_text) TextView mainText;
     @BindView(R.id.counterButton) Button btnCount;
-
-    public String prevUrl="";
+    @BindView(R.id.heart_button) LikeButton heartButton;
+    @BindView(R.id.toolbar) Toolbar toolbar;
     public String url ="";
     final public int total = 15;                    //total num of gifs to be shown
     public String[] titles = new String[total];     //to hold movie titles
     public String[] urls = new String[total];
-    public int count = 0;                           //index of current movie
+    private int count = 0;                           //index of current movie
     public int inCache=0;
     public int answer = -1;
     private Handler mHandler = new Handler();
     public int trueCounter=0;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
         ButterKnife.bind(this);
         final boolean easyMode= getIntent().getExtras().getBoolean("easyMode");
-
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
         btnA.setVisibility(View.INVISIBLE);
         btnB.setVisibility(View.INVISIBLE);
         btnC.setVisibility(View.INVISIBLE);
+        btnCount.setText("0/0");
 
         // call the movie api
         int num = 1+(int)(Math.random() * 100); // get the page number for api
@@ -146,6 +154,8 @@ public class QuizActivity extends Activity {
         btnA.setVisibility(View.INVISIBLE);
         btnB.setVisibility(View.INVISIBLE);
         btnC.setVisibility(View.INVISIBLE);
+        heartButton.setLiked(false);
+
 
         if (count == total) { // go to main page if total count is reached
             Intent intent = new Intent(this, MainActivity.class);
@@ -167,7 +177,6 @@ public class QuizActivity extends Activity {
                     break;
             }
 
-            btnCount.setText(trueCounter + "/" + count);
             mainText.setText("");
             count++;
             GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
@@ -280,18 +289,30 @@ public class QuizActivity extends Activity {
     public void trueAnswer(final View view) {
         trueCounter++;
         view.setBackgroundResource(R.drawable.btn_true);
+     //   YoYo    .with(Techniques.Flash)
+     //           .duration(1000)
+     //           .playOn(gifView);
+
+        btnCount.setText(trueCounter + "/" + count);
 
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 progressBar.setVisibility(View.VISIBLE);
                 request(view);
             }
-        }, 1500);
+        }, 1000);
     }
 
     public void falseAnswer(final View view){
         view.setBackgroundResource(R.drawable.btn_false);
         getAnswer().setBackgroundResource(R.drawable.btn_true);
+
+    //    YoYo.with(Techniques.Tada)
+     //           .duration(700)
+     //           .playOn(gifView);
+
+        btnCount.setText(trueCounter + "/" + count);
+
 
         mHandler.postDelayed(new Runnable() {
             public void run() {

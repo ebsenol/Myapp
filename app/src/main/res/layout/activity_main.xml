@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,8 +27,7 @@
         android:layout_height="60dp"
         android:layout_width="140dp"
         android:text="PLAY"
-        android:alpha="0.75"
-        style="@style/Base.Widget.AppCompat.Button.Colored"
+        style="style/"
         android:onClick="goToPage1"
         android:id="@+id/button1"
         android:layout_marginTop="26dp"
@@ -40,7 +38,6 @@
         android:layout_height="60dp"
         android:layout_width="140dp"
         style="style/"
-        android:alpha="0.65"
         android:text="Explore gifs"
         android:onClick="explore"
         android:id="@+id/explore"
@@ -53,8 +50,6 @@
         android:layout_width="140dp"
         android:layout_height="60dp"
         android:onClick="quit"
-        style="@style/Base.Widget.AppCompat.Button.Colored"
-        android:alpha="0.65"
         android:text="Quit"
         android:id="@+id/quit_button"
         android:layout_marginBottom="48dp"
@@ -76,6 +71,9 @@
         android:id="@+id/button"
         android:onClick="easyMode"
         android:layout_below="@+id/button1"
+        style="style/"
         android:layout_alignStart="@+id/spinner"
         android:layout_alignEnd="@+id/button1" />
+
+
 </RelativeLayout>
