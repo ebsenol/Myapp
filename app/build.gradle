@@ -9,7 +9,7 @@ android {
         applicationId "com.example.senolb.project"
         versionCode 1
         versionName "1.0"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 24
     }
     buildTypes {

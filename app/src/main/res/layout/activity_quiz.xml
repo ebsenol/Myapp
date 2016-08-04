@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@drawable/bg"
+    android:background="#313131"
     android:id="@+id/lay"
     tools:context=".activities.QuizActivity">
 
@@ -13,10 +13,15 @@
         android:id="@+id/imageViewGif"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/counterButton"
-        android:layout_alignEnd="@+id/first_text"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+
         android:layout_above="@+id/answer_1"
-        android:layout_alignStart="@+id/progress" />
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true" />
 
     <ProgressBar
         style="@style/Base.Widget.AppCompat.ProgressBar"
@@ -48,6 +53,7 @@
         android:layout_width="350dp"
         android:layout_height="50dp"
         style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@color/colorPrimary"
         android:alpha="0.65"
         android:shadowColor="#A8A8A8"
         android:shadowDx="0"
@@ -61,10 +67,13 @@
         android:onClick="check"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        android:layout_width="280dp"
+        android:layout_width="350dp"
         android:layout_height="50dp"
         style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@color/colorPrimary"
         android:alpha="0.65"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:shadowColor="#A8A8A8"
         android:shadowDx="0"
         android:shadowDy="0"
@@ -77,63 +86,74 @@
         android:onClick="check"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        android:layout_width="280dp"
+        android:layout_width="350dp"
         android:layout_height="50dp"
         style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@color/colorPrimary"
         android:alpha="0.65"
         android:shadowColor="#A8A8A8"
         android:shadowDx="0"
         android:shadowDy="0"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="45dp"
-        android:layout_alignEnd="@+id/answer_2"
-        android:layout_alignStart="@+id/answer_2" />
+        android:layout_marginBottom="30dp"
+        android:layout_alignStart="@+id/answer_2"
+        android:layout_alignEnd="@+id/answer_2" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="100dp"
-        android:layout_height="match_parent"
-        android:id="@+id/counterButton"
-        android:textColor="#FFFFFFFF"
-        android:textSize="40sp"
-        android:alpha="0.85"
-        android:background="@drawable/btn_true_counter"
-        android:shadowColor="#ff1b0f0f"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignBottom="@+id/toolbar" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/resultText"
+        android:layout_alignBottom="@+id/answer_1"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/background_floating_material_light"
+        android:textStyle="bold"
+        android:textSize="70dp"
+        android:layout_marginTop="100dp"
+        android:alpha="0.8"
+        android:layout_centerHorizontal="true" />
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:alpha="0.85"
-        android:minHeight="?attr/actionBarSize"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        app:titleTextColor="@android:color/white"
-        android:background="?attr/colorPrimary">
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbar"
+        style="@style/MyTheme"
+        android:elevation="4dp"
+        android:background="@color/colorPrimary">
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/imageButton"
+            android:layout_marginRight="100dp"
             android:onClick="goHome"
-            app:icon_size="55dp"
-            android:background="@drawable/home"
-            android:layout_alignStart="@+id/imageViewGif"
-            android:layout_alignTop="@+id/imageViewGif" />
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/home"/>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:id="@+id/counterButton"
+            android:textColor="#FFFFFFFF"
+            android:layout_marginRight="100dp"
+            android:textSize="40sp"
+            android:alpha="0.85"
+            android:background="@drawable/btn_true_counter"
+            android:shadowColor="#ff1b0f0f"
+           />
+
+
+        <com.like.LikeButton
+            app:icon_type="heart"
+            app:icon_size="37dp"
+            android:id="@+id/heart_button"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:anim_scale_factor="1.6" />
 
     </android.support.v7.widget.Toolbar>
-
-    <com.like.LikeButton
-        app:icon_type="heart"
-        app:icon_size="40dp"
-        android:id="@+id/heart_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:anim_scale_factor="1.6"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
-
-
 </RelativeLayout>

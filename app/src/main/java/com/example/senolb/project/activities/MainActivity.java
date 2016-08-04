@@ -3,7 +3,9 @@ package com.example.senolb.project.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.Explode;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -21,6 +23,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+
+// set an exit transition
+        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 

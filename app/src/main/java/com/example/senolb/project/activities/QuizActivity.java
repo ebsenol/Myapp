@@ -1,15 +1,25 @@
 package com.example.senolb.project.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -37,7 +47,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class QuizActivity extends AppCompatActivity {
+public class QuizActivity extends Activity {
     @BindView(R.id.imageViewGif) ImageView gifView;
     @BindView(R.id.answer_1) Button btnA;
     @BindView(R.id.answer_2) Button btnB;
@@ -46,9 +56,10 @@ public class QuizActivity extends AppCompatActivity {
     @BindView(R.id.first_text) TextView mainText;
     @BindView(R.id.counterButton) Button btnCount;
     @BindView(R.id.heart_button) LikeButton heartButton;
+    @BindView(R.id.resultText) TextView resultText;
     @BindView(R.id.toolbar) Toolbar toolbar;
     public String url ="";
-    final public int total = 15;                    //total num of gifs to be shown
+    final public int total = 10;                    //total num of gifs to be shown
     public String[] titles = new String[total];     //to hold movie titles
     public String[] urls = new String[total];
     private int count = 0;                           //index of current movie
@@ -60,22 +71,25 @@ public class QuizActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+
         setContentView(R.layout.activity_quiz);
         ButterKnife.bind(this);
         final boolean easyMode= getIntent().getExtras().getBoolean("easyMode");
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+      //  setSupportActionBar(toolbar);
+
         progressBar.setVisibility(View.VISIBLE);
         btnA.setVisibility(View.INVISIBLE);
         btnB.setVisibility(View.INVISIBLE);
         btnC.setVisibility(View.INVISIBLE);
+        resultText.setVisibility(View.INVISIBLE);
         btnCount.setText("0/0");
 
         // call the movie api
-        int num = 1+(int)(Math.random() * 100); // get the page number for api
+        int num = 1+(int)(Math.random() * 5); // get the page number for api
         String page = num +"";
         ApiInterfaceMovie service = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
-        float vote = (float) 5.9;
+        float vote = (float) 7;
 
 
         String genre = getIntent().getExtras().getString("genre");
@@ -146,33 +160,56 @@ public class QuizActivity extends AppCompatActivity {
             mainText.setText(titles[count-1]);
     }
 
-    public void request(View view) {
+    public void request(final View view) {
         progressBar.setVisibility(View.VISIBLE);
-        btnA.setBackgroundResource(R.drawable.btn_normal); // make the buttons default color again
-        btnB.setBackgroundResource(R.drawable.btn_normal);
-        btnC.setBackgroundResource(R.drawable.btn_normal);
-        btnA.setVisibility(View.INVISIBLE);
-        btnB.setVisibility(View.INVISIBLE);
-        btnC.setVisibility(View.INVISIBLE);
+       // btnA.setBackgroundResource(R.drawable.btn_normal); // make the buttons default color again
+       // btnB.setBackgroundResource(R.drawable.btn_normal);
+       // btnC.setBackgroundResource(R.drawable.btn_normal);
+        btnA.setBackgroundColor(0xFF673AB7);
+        btnB.setBackgroundColor(0xFF673AB7);
+        btnC.setBackgroundColor(0xFF673AB7);
+
+
+        makeButtonsInvisible();
+        //  btnA.setVisibility(View.INVISIBLE);
+        //btnB.setVisibility(View.INVISIBLE);
+        //btnC.setVisibility(View.INVISIBLE);
         heartButton.setLiked(false);
 
 
+
+
         if (count == total) { // go to main page if total count is reached
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            progressBar.setVisibility(View.VISIBLE);
+            showResult(getCurrentFocus());
         } else {
             //get the movie title from array
-            String keyword = titles[count];
+            final String keyword = titles[count];
             answer = 1 + (int) (Math.random() * 3); //set the answer
             switch (answer) {
                 case 1:
-                    fillContent(btnB, btnC, btnA, keyword);
+                    mHandler.postDelayed(new Runnable() {
+                    public void run() {
+                        fillContent(btnB, btnC, btnA, keyword);
+                    }
+                }, 200);
+
                     break;
                 case 2:
-                    fillContent(btnA, btnC, btnB, keyword);
+                    mHandler.postDelayed(new Runnable() {
+                        public void run() {
+                            fillContent(btnA, btnC, btnB, keyword);
+                        }
+                    }, 200);
+
                     break;
                 case 3:
-                    fillContent(btnA, btnB, btnC, keyword);
+                    mHandler.postDelayed(new Runnable() {
+                        public void run() {
+                            fillContent(btnA, btnB, btnC, keyword);
+                        }
+                    }, 200);
+
                 default:
                     break;
             }
@@ -210,11 +247,9 @@ public class QuizActivity extends AppCompatActivity {
 
                 mHandler.postDelayed(new Runnable() {
                     public void run() {
-                        btnA.setVisibility(View.VISIBLE);
-                        btnB.setVisibility(View.VISIBLE);
-                        btnC.setVisibility(View.VISIBLE);
+                        makeButtonsVisible();
                     }
-                }, 1500);
+                }, 2500);
 
                 if (inCache<total) new LoadNormalGifs(1).execute(); // load one gif from future :P
             }
@@ -244,10 +279,7 @@ public class QuizActivity extends AppCompatActivity {
                         })
                         .into(imageViewTarget);
                 mHandler.postDelayed(new Runnable() {
-                    public void run() {
-                        btnA.setVisibility(View.VISIBLE);
-                        btnB.setVisibility(View.VISIBLE);
-                        btnC.setVisibility(View.VISIBLE);
+                    public void run() {makeButtonsVisible();
                     }
                 }, 1500);
 
@@ -255,6 +287,93 @@ public class QuizActivity extends AppCompatActivity {
 
             }
         }
+    }
+    public void makeButtonsVisible(){
+        int cx = btnA.getWidth() / 2;
+        int cy = btnA.getHeight() / 2;
+
+        float finalRadius = (float) Math.hypot(cx, cy);
+
+        final Animator anim =
+                ViewAnimationUtils.createCircularReveal(btnA, cx, cy, 0, finalRadius);
+
+        final Animator anim2 =
+                ViewAnimationUtils.createCircularReveal(btnB, cx, cy, 0, finalRadius);
+
+        final Animator anim3 =
+                ViewAnimationUtils.createCircularReveal(btnC, cx, cy, 0, finalRadius);
+
+        // make the view visible and start the animation
+        btnA.setVisibility(View.VISIBLE);
+        anim.start();
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                btnB.setVisibility(View.VISIBLE);
+                anim2.start();
+            }
+        },50);
+
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                btnC.setVisibility(View.VISIBLE);
+                anim3.start();
+            }
+        },100);
+    }
+
+    public void makeButtonsInvisible(){
+
+        // get the center for the clipping circle
+        int cx = btnA.getWidth() / 2;
+        int cy = btnA.getHeight() / 2;
+        // get the initial radius for the clipping circle
+        float initialRadius = (float) Math.hypot(cx, cy);
+        // create the animation (the final radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(btnA, cx, cy, initialRadius, 0);
+        final Animator anim2 =
+                ViewAnimationUtils.createCircularReveal(btnB, cx, cy, initialRadius, 0);
+        final Animator anim3 =
+                ViewAnimationUtils.createCircularReveal(btnC, cx, cy, initialRadius, 0);
+        // make the view invisible when the animation is done
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                btnA.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        anim2.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                btnB.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        anim3.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                btnC.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        // start the animation
+        anim.start();
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                btnC.setVisibility(View.VISIBLE);
+                anim2.start();
+            }
+        },50);
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                btnC.setVisibility(View.VISIBLE);
+                anim3.start();
+            }
+        },100);
     }
 
     public void check(View view) { // checks if the answer is true or false
@@ -271,8 +390,6 @@ public class QuizActivity extends AppCompatActivity {
             request(view);
         }
         else falseAnswer(view);
-
-
     }
 
     public Button getAnswer(){
@@ -283,29 +400,37 @@ public class QuizActivity extends AppCompatActivity {
         else if (answer == 3)
             return btnC;
         else return null;
-
     }
 
     public void trueAnswer(final View view) {
         trueCounter++;
-        view.setBackgroundResource(R.drawable.btn_true);
-     //   YoYo    .with(Techniques.Flash)
-     //           .duration(1000)
-     //           .playOn(gifView);
-
+        colorChangeAnimation(view,0xFF673AB7, 0XFF4CAF50,300);  //true
         btnCount.setText(trueCounter + "/" + count);
-
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 progressBar.setVisibility(View.VISIBLE);
                 request(view);
             }
-        }, 1000);
+        }, 1500);
     }
+    public void colorChangeAnimation(final View view, int color1, int color2, int time){
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), color1, color2);
+        colorAnimation.setDuration(time); // milliseconds
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                view.setBackgroundColor((int) animator.getAnimatedValue());
+            }
 
+        });
+        colorAnimation.start();
+    }
     public void falseAnswer(final View view){
-        view.setBackgroundResource(R.drawable.btn_false);
-        getAnswer().setBackgroundResource(R.drawable.btn_true);
+        final Button ans = getAnswer();
+
+        colorChangeAnimation(view,0xFF673AB7, 0xFFF44336,300); //false
+        colorChangeAnimation(ans,0xFF673AB7, 0XFF4CAF50,300);  //true
+
 
     //    YoYo.with(Techniques.Tada)
      //           .duration(700)
@@ -479,8 +604,116 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     public void goHome(View view){
+        getWindow().setExitTransition(new Explode());
         Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        startActivity(intent,
+                ActivityOptions
+                        .makeSceneTransitionAnimation(this).toBundle());
+
+    }
+    public void showResult(View view){
+        makeButtonsInvisible();
+        ApiInterface service = ApiInterface.retrofit.create(ApiInterface.class);
+        Call<JsonResponse> myDownsized;
+        if (trueCounter< total/4 + 1){
+            myDownsized =  service.getGif("dc6zaTOxFJmzC", "json", "disappointed");
+            resultText.setText("You Suck");
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    setTextWithAnimation(resultText,"You Suck");
+                }
+            },2000);
+        }
+        else if ( trueCounter <total/2 )
+        {
+            myDownsized =  service.getGif("dc6zaTOxFJmzC", "json", "not bad");
+            resultText.setText("Not Bad");
+
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    setTextWithAnimation(resultText,"Not Bad");
+                }
+            },2000);
+
+        }
+        else if ( trueCounter< 3*(total/4) )
+        {
+            myDownsized =  service.getGif("dc6zaTOxFJmzC", "json", "good job");
+            resultText.setText("Good Job");
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    setTextWithAnimation(resultText,"Good Job");
+                }
+            },2000);
+
+        }
+        else { //guud
+            myDownsized =  service.getGif("dc6zaTOxFJmzC", "json", "clap");
+            resultText.setText("Well Done");
+
+            mHandler.postDelayed(new Runnable() {
+                public void run() {
+                    setTextWithAnimation(resultText,"Well Done");
+                }
+            },2000);
+        }
+
+        final GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
+        myDownsized.enqueue(new Callback<JsonResponse>() {
+            @Override
+            public void onResponse(Call<JsonResponse> call,Response<JsonResponse> response){
+                if (response.isSuccessful()) {
+                    //get the data
+                    Data data = response.body().getData();
+                    url = data.getImageOriginalUrl();
+                    progressBar.setVisibility(View.INVISIBLE);
+                    Glide   .with(getApplicationContext())
+                            .load(url)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .listener(new RequestListener<String, GlideDrawable>() {
+                                @Override
+                                public boolean onException(Exception e,
+                                                           String model,
+                                                           Target<GlideDrawable> target,
+                                                           boolean isFirstResource) {
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(GlideDrawable resource,
+                                                               String model,
+                                                               Target<GlideDrawable> target,
+                                                               boolean isFromMemoryCache,
+                                                               boolean isFirstResource) {
+                                    progressBar.setVisibility(View.INVISIBLE); //gif is ready
+                                    return false;
+                                }
+                            })
+                            .into(imageViewTarget)
+                    ;
+
+                } else { //unsuccessful response
+
+                }
+            }
+            @Override
+            public void onFailure(Call<JsonResponse> call,
+                                  Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
+    }
+    public void setTextWithAnimation(View view, String text){
+        int cx = view.getWidth() / 2;
+        int cy = view.getHeight() / 2;
+
+        float finalRadius = (float) Math.hypot(cx, cy);
+
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
+        view.setVisibility(View.VISIBLE);
+        TextView t = (TextView) view;
+        anim.start();
     }
 }
 
