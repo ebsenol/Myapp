@@ -105,7 +105,7 @@
         android:layout_height="wrap_content"
         android:text=""
         android:id="@+id/resultText"
-        android:layout_alignBottom="@+id/answer_1"
+        android:layout_alignBottom="@+id/answer_2"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/background_floating_material_light"
         android:textStyle="bold"
@@ -147,12 +147,11 @@
 
 
         <com.like.LikeButton
-            app:icon_type="heart"
-            app:icon_size="37dp"
-            android:id="@+id/heart_button"
-            android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:icon_type="heart"
+            android:id="@+id/heart_button"
+            android:layout_centerHorizontal="true"
             app:anim_scale_factor="1.6" />
 
     </android.support.v7.widget.Toolbar>
