@@ -32,6 +32,7 @@
         <item name="android:windowSharedElementExitTransition">
             @transition/change_image_transform</item>
         <item name="android:colorAccent">@android:color/holo_orange_light</item>
+        <item name="android:colorPrimary">@android:color/holo_blue_light</item>
     </style>
     <style name="MyButton" parent="Theme.AppCompat.Light">
         <item name="colorControlHighlight">@color/colorPrimary</item>

@@ -2,20 +2,21 @@ package com.example.senolb.project.activities;
 
 import android.animation.Animator;
 import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -29,6 +30,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.Target;
+import com.example.senolb.project.GlobalData;
 import com.example.senolb.project.R;
 import com.example.senolb.project.easymodegif.ListInterface;
 import com.example.senolb.project.movie.ApiInterfaceMovie;
@@ -38,6 +40,9 @@ import com.example.senolb.project.normalmodegif.ApiInterface;
 import com.example.senolb.project.normalmodegif.Data;
 import com.example.senolb.project.normalmodegif.JsonResponse;
 import com.like.LikeButton;
+import com.like.OnLikeListener;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,7 +60,8 @@ public class QuizActivity extends Activity {
     @BindView(R.id.counterButton) Button btnCount;
     @BindView(R.id.heart_button) LikeButton heartButton;
     @BindView(R.id.resultText) TextView resultText;
-    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.progressBar) ProgressBar timeBar;
+
     private String url ="";
     final private int total = 10;                    //total num of gifs to be shown
     private String[] titles = new String[total];     //to hold movie titles
@@ -67,17 +73,41 @@ public class QuizActivity extends Activity {
     private int trueCounter=0;
     private CountDownTimer waitTimer;
     private int totalPoints = 0;
+    private ObjectAnimator animation;
     private double leftTime =0 ;
-
+    public Bundle bundleExplore = new Bundle();
+    public ArrayList<String> pass = new ArrayList<>();
+    private void setupWindowAnimations() {
+        Slide slide = new Slide();
+        slide.setDuration(1000);
+        getWindow().setExitTransition(slide);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-
         setContentView(R.layout.activity_quiz);
+        setupWindowAnimations();
+
         ButterKnife.bind(this);
         final boolean easyMode= getIntent().getExtras().getBoolean("easyMode");
-      //  setSupportActionBar(toolbar);
+
+        timeBar.setVisibility(View.VISIBLE);
+        timeBar.setMax(100000);
+
+
+        heartButton.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                if(count<total)
+                   GlobalData.addToPassingList(urls[count]+"]"+titles[count]);
+            }
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                GlobalData.removeFromPassingList(urls[count]);
+
+            }
+        });
+
 
         progressBar.setVisibility(View.VISIBLE);
         btnA.setVisibility(View.INVISIBLE);
@@ -162,7 +192,6 @@ public class QuizActivity extends Activity {
         heartButton.setLiked(false);
 
         if (count == total) { // go to main page if total count is reached
-            progressBar.setVisibility(View.VISIBLE);
             showResult(getCurrentFocus());
         } else {
             //get the movie title from array
@@ -196,13 +225,12 @@ public class QuizActivity extends Activity {
                     break;
             }
             mainText.setText("");
-            count++;
             GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
 
             if( !getIntent().getExtras().getBoolean("easyMode")) { //normal mode
 
                 Glide   .with(getApplicationContext())
-                        .load(urls[count-1])
+                        .load(urls[count])
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .crossFade()
                         .listener(new RequestListener<String, GlideDrawable>() {
@@ -221,6 +249,23 @@ public class QuizActivity extends Activity {
                                                            boolean isFromMemoryCache,
                                                            boolean isFirstResource) {
                                 progressBar.setVisibility(View.INVISIBLE); //gif is ready
+
+                                mHandler.postDelayed(new Runnable() {
+                                    public void run() {makeButtonVisible(btnA);
+                                    }
+                                }, 1300);
+                                mHandler.postDelayed(new Runnable() {
+                                    public void run() {makeButtonVisible(btnB);
+                                    }
+                                }, 1400);
+                                mHandler.postDelayed(new Runnable() {
+                                    public void run() {makeButtonVisible(btnC);
+                                    }
+                                }, 1500);
+
+                                animation = ObjectAnimator.ofInt (timeBar, "progress", 100000, 0);
+                                animation.setDuration (11000); //in milliseconds
+                                animation.start();
                                 waitTimer = new CountDownTimer(11000, 1000) {
 
                                     public void onTick(long millisUntilFinished) {
@@ -241,7 +286,7 @@ public class QuizActivity extends Activity {
             }
             else { //easy mode
                 Glide   .with(getApplicationContext())
-                        .load(urls[count-1])
+                        .load(urls[count])
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .crossFade(400)
                         .listener(new RequestListener<String, GlideDrawable>() {
@@ -260,10 +305,29 @@ public class QuizActivity extends Activity {
                                                            boolean isFromMemoryCache,
                                                            boolean isFirstResource) {
                                 progressBar.setVisibility(View.INVISIBLE); //gif is ready
+
+                                mHandler.postDelayed(new Runnable() {
+                                    public void run() {makeButtonVisible(btnA);
+                                    }
+                                }, 1300);
+                                mHandler.postDelayed(new Runnable() {
+                                    public void run() {makeButtonVisible(btnB);
+                                    }
+                                }, 1400);
+                                mHandler.postDelayed(new Runnable() {
+                                    public void run() {makeButtonVisible(btnC);
+                                    }
+                                }, 1500);
+
+                                animation = ObjectAnimator.ofInt (timeBar, "progress", 100000, 0);
+                                animation.setDuration (11000); //in milliseconds
+                                animation.start();
+
                                 waitTimer = new CountDownTimer(11000, 1000) {
 
                                     public void onTick(long millisUntilFinished) {
                                         btnCount.setText(millisUntilFinished / 1000+"");
+                                        leftTime=  millisUntilFinished;
                                     }
 
                                     public void onFinish() {
@@ -277,24 +341,14 @@ public class QuizActivity extends Activity {
                 if (inCache<total) new LoadEasyGifs(1).execute();
             }
 
-            //start the timer
+            count++;
 
-            mHandler.postDelayed(new Runnable() {
-                public void run() {makeButtonVisible(btnA);
-                }
-            }, 1300);
-            mHandler.postDelayed(new Runnable() {
-                public void run() {makeButtonVisible(btnB);
-                }
-            }, 1400);
-            mHandler.postDelayed(new Runnable() {
-                public void run() {makeButtonVisible(btnC);
-                }
-            }, 1500);
+            //start the timer
 
         }
     }
 
+    //animations
     public void makeButtonVisible(final Button btn){
    /*     int cx = btnA.getWidth() / 2;
         int cy = btnA.getHeight() / 2;
@@ -406,7 +460,9 @@ public class QuizActivity extends Activity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 btn.setVisibility(View.INVISIBLE);
-                btn.setBackgroundColor(0xFF673AB7);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    btn.setBackgroundColor(getColor(R.color.colorPrimary));
+                }
             }
             @Override
             public void onAnimationRepeat(Animation animation) {}
@@ -418,13 +474,26 @@ public class QuizActivity extends Activity {
         int cy = view.getHeight() / 2;
 
         float finalRadius = (float) Math.hypot(cx, cy);
-
+        view.clearAnimation();
         Animator anim =
                 ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
         view.setVisibility(View.VISIBLE);
         anim.start();
     }
+    public void colorChangeAnimation(final View view, int color1, int color2, int time){
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), color1, color2);
+        colorAnimation.setDuration(time); // milliseconds
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                view.setBackgroundColor((int) animator.getAnimatedValue());
+            }
 
+        });
+        colorAnimation.start();
+    }
+
+    //answer related
     public void check(View view) { // checks if the answer is true or false
         if ( answer == 1 && btnA == view){
             trueAnswer(btnA);
@@ -453,6 +522,7 @@ public class QuizActivity extends Activity {
         totalPoints+=leftTime;
         if(waitTimer != null) {
             waitTimer.cancel();
+            animation.cancel();
             waitTimer = null;
         }
         trueCounter++;
@@ -486,6 +556,7 @@ public class QuizActivity extends Activity {
     public void falseAnswer(final View view){
         if(waitTimer != null) {
             waitTimer.cancel();
+            animation.cancel();
             waitTimer = null;
         }
         final Button ans = getAnswer();
@@ -517,6 +588,7 @@ public class QuizActivity extends Activity {
         final Button ans = getAnswer();
         if(waitTimer != null) {
             waitTimer.cancel();
+            animation.cancel();
             waitTimer = null;
         }
         btnCount.setText("0");
@@ -542,19 +614,6 @@ public class QuizActivity extends Activity {
             }
         }, 2000);
 
-    }
-
-    public void colorChangeAnimation(final View view, int color1, int color2, int time){
-        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), color1, color2);
-        colorAnimation.setDuration(time); // milliseconds
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                view.setBackgroundColor((int) animator.getAnimatedValue());
-            }
-
-        });
-        colorAnimation.start();
     }
     public void fillContent(final Button b1, final Button b2, final Button trueButton, final String keyword){
 
@@ -595,6 +654,7 @@ public class QuizActivity extends Activity {
         });
     }
 
+
     public void goHome(View view){
         getWindow().setExitTransition(new Explode());
         Intent intent = new Intent(this, MainActivity.class);
@@ -604,60 +664,44 @@ public class QuizActivity extends Activity {
 
     }
     public void showResult(View view){
-        makeButtonInvisible(btnA);
-        makeButtonInvisible(btnB);
-        makeButtonInvisible(btnC);
+
+        Glide.clear(gifView);
+        resultText.clearComposingText();
+        progressBar.setVisibility(View.VISIBLE);
+
+        makeButtonInvisible(getAnswer());
         int point = totalPoints/1000;
-        btnCount.setText(point+"/100");
+        btnCount.setText(point+"");
         if(waitTimer != null) {
             waitTimer.cancel();
+            animation.cancel();
             waitTimer = null;
         }
+        final String keyword;
         ApiInterface service = ApiInterface.retrofit.create(ApiInterface.class);
         Call<JsonResponse> myDownsized;
-        if (trueCounter< total/4 + 1){
-            myDownsized =  service.getGif("dc6zaTOxFJmzC", "json", "disappointed");
+
+        if (point< 15){
+            keyword = "disappointed";
             resultText.setText("You Suck");
-            mHandler.postDelayed(new Runnable() {
-                public void run() {
-                    setTextWithAnimation(resultText,"You Suck");
-                }
-            },2000);
         }
-        else if ( trueCounter <total/2 )
+        else if ( point <30 )
         {
-            myDownsized =  service.getGif("dc6zaTOxFJmzC", "json", "not bad");
+            keyword = "not bad";
             resultText.setText("Not Bad");
 
-            mHandler.postDelayed(new Runnable() {
-                public void run() {
-                    setTextWithAnimation(resultText,"Not Bad");
-                }
-            },2000);
-
         }
-        else if ( trueCounter< 3*(total/4) )
+        else if ( point<50 )
         {
-            myDownsized =  service.getGif("dc6zaTOxFJmzC", "json", "good job");
+            keyword = "thumbs up";
             resultText.setText("Good Job");
-            mHandler.postDelayed(new Runnable() {
-                public void run() {
-                    setTextWithAnimation(resultText,"Good Job");
-                }
-            },2000);
-
         }
         else { //guud
-            myDownsized =  service.getGif("dc6zaTOxFJmzC", "json", "clap");
+            keyword = "cheers";
             resultText.setText("Well Done");
-
-            mHandler.postDelayed(new Runnable() {
-                public void run() {
-                    setTextWithAnimation(resultText,"Well Done");
-                }
-            },2000);
         }
 
+        myDownsized =  service.getGif("dc6zaTOxFJmzC", "json", keyword);
         final GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
         myDownsized.enqueue(new Callback<JsonResponse>() {
             @Override
@@ -685,6 +729,14 @@ public class QuizActivity extends Activity {
                                                                boolean isFromMemoryCache,
                                                                boolean isFirstResource) {
                                     progressBar.setVisibility(View.INVISIBLE); //gif is ready
+                                    if (keyword.equals("disappointed"))
+                                        setTextWithAnimation(resultText,"You Suck");
+                                    else if(keyword.equals("not bad"))
+                                        setTextWithAnimation(resultText,"Not Bad");
+                                    else if ( keyword.equals("thumbs up"))
+                                        setTextWithAnimation(resultText,"Good Job");
+                                    else if (keyword.equals("cheers"))
+                                        setTextWithAnimation(resultText,"Well Done");
                                     return false;
                                 }
                             })
@@ -703,7 +755,7 @@ public class QuizActivity extends Activity {
         });
     }
 
-
+    //work in background
     public void incrementInCache(){
         inCache++;
     }

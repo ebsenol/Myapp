@@ -15,7 +15,6 @@
         android:textColor="#FFFFFFFF"
         android:textSize="40sp"
         android:alpha="0.85"
-        android:background="@drawable/btn_true_counter"
         android:shadowColor="#ff1b0f0f"
         android:layout_alignTop="@+id/ab_heart_button"
         android:layout_centerHorizontal="true" />
