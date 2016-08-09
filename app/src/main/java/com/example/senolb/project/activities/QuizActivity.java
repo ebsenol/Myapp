@@ -7,6 +7,7 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
 import com.like.LikeButton;
@@ -78,7 +80,7 @@ public class QuizActivity extends Activity {
     private int answer = -1;
     private int totalPoints = 0;
     private int trueCounter=0;
-
+    private double savedLeftTime = 0;
     private Handler mHandler = new Handler();
     private CountDownTimer waitTimer;
     private ObjectAnimator animation;
@@ -107,11 +109,7 @@ public class QuizActivity extends Activity {
         slide.setDuration(1000);
         getWindow().setExitTransition(slide);
     }
-/*
-    ShareLinkContent linkContent = new ShareLinkContent.Builder()
-            .setContentUrl(Uri.parse("http://stackoverflow.com/questions/33198728/share-button-looks-disabled"))
-            .build();
-*/
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,11 +118,20 @@ public class QuizActivity extends Activity {
         shareDialog = new ShareDialog(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
+        ButterKnife.bind(this);
+
+
+
 
         setupWindowAnimations();
+        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
 
+        Glide.with(getApplicationContext())
+                .load(getIntent().getExtras().getString("url"))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .into(imageViewTarget);
 
-        ButterKnife.bind(this);
         final boolean easyMode= getIntent().getExtras().getBoolean("easyMode");
 
         timeBar.setVisibility(View.VISIBLE);
@@ -220,12 +227,11 @@ public class QuizActivity extends Activity {
 
     public void request(final View view) {
         progressBar.setVisibility(View.VISIBLE);
-        btnA.setClickable(true);
-        btnB.setClickable(true);
-        btnC.setClickable(true);
         int cur = count+1;
         qNum.setText(cur+"/"+total);
         if (getAnswer()!=null)  makeButtonInvisible(getAnswer());
+
+
 
         heartButton.setLiked(false);
 
@@ -233,6 +239,14 @@ public class QuizActivity extends Activity {
             System.out.println("CALL RESULT");
             showResult(getCurrentFocus());
         } else {
+
+            ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                    .setContentUrl(Uri.parse(urls[count]))
+                    .setContentTitle("Hello Facebook")
+                    .setContentDescription("Giffit")
+                    .build();
+            facebookShareButton.setShareContent(linkContent);
+
             //get the movie title from array
             final String keyword = titles[count];
             answer = 1 + (int) (Math.random() * 3); //set the answer
@@ -265,127 +279,71 @@ public class QuizActivity extends Activity {
             }
             mainText.setText("");
             GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
+            Glide.clear(imageViewTarget);
+            Glide.with(getApplicationContext())
+                .load(urls[count])
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e,
+                                               String model,
+                                               Target<GlideDrawable> target,
+                                               boolean isFirstResource) {
+                        return false;
+                    }
 
-            if( !getIntent().getExtras().getBoolean("easyMode")) { //normal mode
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource,
+                                                   String model,
+                                                   Target<GlideDrawable> target,
+                                                   boolean isFromMemoryCache,
+                                                   boolean isFirstResource) {
+                        progressBar.setVisibility(View.INVISIBLE); //gif is ready
 
-                Glide   .with(getApplicationContext())
-                        .load(urls[count])
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .crossFade()
-                        .listener(new RequestListener<String, GlideDrawable>() {
-                            @Override
-                            public boolean onException(Exception e,
-                                                       String model,
-                                                       Target<GlideDrawable> target,
-                                                       boolean isFirstResource) {
-                                return false;
+                        mHandler.postDelayed(new Runnable() {
+                            public void run() {makeButtonVisible(btnA);
+                                animation = ObjectAnimator.ofInt (timeBar, "progress", 100000, 0);
+                                animation.setDuration (11000); //in milliseconds
+                                animation.start();
+                                waitTimer = new CountDownTimer(11000, 1000) {
+
+                                    public void onTick(long millisUntilFinished) {
+                                        btnCount.setText(millisUntilFinished / 1000+"");
+                                        leftTime=  millisUntilFinished;
+                                    }
+
+                                    public void onFinish() {
+                                        timeOut();
+                                    }
+                                }.start();
                             }
-
-                            @Override
-                            public boolean onResourceReady(GlideDrawable resource,
-                                                           String model,
-                                                           Target<GlideDrawable> target,
-                                                           boolean isFromMemoryCache,
-                                                           boolean isFirstResource) {
-                                progressBar.setVisibility(View.INVISIBLE); //gif is ready
-
-                                mHandler.postDelayed(new Runnable() {
-                                    public void run() {makeButtonVisible(btnA);
-                                        animation = ObjectAnimator.ofInt (timeBar, "progress", 100000, 0);
-                                        animation.setDuration (11000); //in milliseconds
-                                        animation.start();
-                                        waitTimer = new CountDownTimer(11000, 1000) {
-
-                                            public void onTick(long millisUntilFinished) {
-                                                btnCount.setText(millisUntilFinished / 1000+"");
-                                                leftTime=  millisUntilFinished;
-                                            }
-
-                                            public void onFinish() {
-                                                timeOut();
-                                            }
-                                        }.start();
-                                    }
-                                }, 1300);
-                                mHandler.postDelayed(new Runnable() {
-                                    public void run() {makeButtonVisible(btnB);
-                                    }
-                                }, 1400);
-                                mHandler.postDelayed(new Runnable() {
-                                    public void run() {makeButtonVisible(btnC);
-                                    }
-                                }, 1500);
-
-
-                                return false;
+                        }, 1300);
+                        mHandler.postDelayed(new Runnable() {
+                            public void run() {makeButtonVisible(btnB);
                             }
-                        })
-                        .into(imageViewTarget);
+                        }, 1400);
+                        mHandler.postDelayed(new Runnable() {
+                            public void run() {makeButtonVisible(btnC);
+                                btnA.setClickable(true);
+                                btnB.setClickable(true);
+                                btnC.setClickable(true);
+                            }
+                        }, 1500);
 
-                if (inCache<total) new LoadNormalGifs(1).execute(); // load one gif from future :P
+
+                        return false;
+                    }
+                })
+                .into(imageViewTarget);
+
+            if ( getIntent().getExtras().getBoolean("easyMode") && inCache<total) {
+                new LoadEasyGifs(1).execute();
             }
-            else { //easy mode
-                Glide   .with(getApplicationContext())
-                        .load(urls[count])
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .crossFade(400)
-                        .listener(new RequestListener<String, GlideDrawable>() {
-                            @Override
-                            public boolean onException(Exception e,
-                                                       String model,
-                                                       Target<GlideDrawable> target,
-                                                       boolean isFirstResource) {
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(GlideDrawable resource,
-                                                           String model,
-                                                           Target<GlideDrawable> target,
-                                                           boolean isFromMemoryCache,
-                                                           boolean isFirstResource) {
-                                progressBar.setVisibility(View.INVISIBLE); //gif is ready
-
-                                mHandler.postDelayed(new Runnable() {
-                                    public void run() {makeButtonVisible(btnA);
-                                        animation = ObjectAnimator.ofInt (timeBar, "progress", 100000, 0);
-                                        animation.setDuration (11000); //in milliseconds
-                                        animation.start();
-
-                                        waitTimer = new CountDownTimer(11000, 1000) {
-
-                                            public void onTick(long millisUntilFinished) {
-                                                btnCount.setText(millisUntilFinished / 1000+"");
-                                                leftTime=  millisUntilFinished;
-                                            }
-
-                                            public void onFinish() {
-                                                timeOut();
-                                            }
-                                        }.start();
-                                    }
-                                }, 1300);
-                                mHandler.postDelayed(new Runnable() {
-                                    public void run() {makeButtonVisible(btnB);
-                                    }
-                                }, 1400);
-                                mHandler.postDelayed(new Runnable() {
-                                    public void run() {makeButtonVisible(btnC);
-                                    }
-                                }, 1500);
-
-
-                                return false;
-                            }
-                        })
-                        .into(imageViewTarget);
-                if (inCache<total) new LoadEasyGifs(1).execute();
+            else if (inCache<total) {
+                new LoadNormalGifs(1).execute();
             }
-
             count++;
-
-            //start the timer
-
         }
     }
 
@@ -876,6 +834,31 @@ public class QuizActivity extends Activity {
                 }
             });
             return null;
+        }
+    }
+    @Override
+    public void onRestart() {
+        super.onRestart();  // Always call the superclass method first
+        animation.resume();
+        waitTimer = new CountDownTimer((long) savedLeftTime, 1000) {
+            public void onTick(long millisUntilFinished) {
+                btnCount.setText(millisUntilFinished / 1000+"");
+                leftTime=  millisUntilFinished;
+            }
+
+            public void onFinish() {
+                timeOut();
+            }
+        }.start();
+    }
+    @Override
+    public void onStop() {
+        super.onStop();  // Always call the superclass method first
+        savedLeftTime = leftTime;
+        if(waitTimer != null) {
+            waitTimer.cancel();
+            animation.pause();
+            waitTimer = null;
         }
     }
 }
