@@ -1,4 +1,4 @@
-package com.example.senolb.project.GestureHelper;
+package com.example.senolb.project.gesturehelper;
 
 /**
  * Created by senolb on 08/08/16.

@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.transition.Explode;
 import android.transition.Slide;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
@@ -23,7 +24,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -39,11 +39,15 @@ import com.example.senolb.project.movie.Result;
 import com.example.senolb.project.normalmodegif.ApiInterface;
 import com.example.senolb.project.normalmodegif.Data;
 import com.example.senolb.project.normalmodegif.JsonResponse;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.share.Sharer;
+import com.facebook.share.widget.ShareButton;
+import com.facebook.share.widget.ShareDialog;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
-
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -61,39 +65,72 @@ public class QuizActivity extends Activity {
     @BindView(R.id.heart_button) LikeButton heartButton;
     @BindView(R.id.resultText) TextView resultText;
     @BindView(R.id.progressBar) ProgressBar timeBar;
+    @BindView(R.id.qnumber_and_point) Button qNum;
+    @BindView(R.id.share) ShareButton facebookShareButton;
 
-    private String url ="";
-    final private int total = 10;                    //total num of gifs to be shown
+    private final int total = 10;                    //total num of gifs to be shown
     private String[] titles = new String[total];     //to hold movie titles
     private String[] urls = new String[total];
+    private String url = "";
+    private double leftTime =0 ;
     private int count = 0;                           //index of current movie
     private int inCache=0;
     private int answer = -1;
-    private Handler mHandler = new Handler();
-    private int trueCounter=0;
-    private CountDownTimer waitTimer;
     private int totalPoints = 0;
+    private int trueCounter=0;
+
+    private Handler mHandler = new Handler();
+    private CountDownTimer waitTimer;
     private ObjectAnimator animation;
-    private double leftTime =0 ;
-    public Bundle bundleExplore = new Bundle();
-    public ArrayList<String> pass = new ArrayList<>();
+
+    private CallbackManager callbackManager;
+    private ShareDialog shareDialog;
+
+    private FacebookCallback<Sharer.Result> shareCallback = new FacebookCallback<Sharer.Result>() {
+        @Override
+        public void onCancel() {
+            Log.d("HelloFacebook", "Canceled");
+        }
+
+        @Override
+        public void onError(FacebookException error) {
+            Log.d("HelloFacebook", String.format("Error: %s", error.toString()));
+        }
+
+        @Override
+        public void onSuccess(Sharer.Result result) {
+            Log.d("HelloFacebook", "Success!");
+        }
+    };
     private void setupWindowAnimations() {
         Slide slide = new Slide();
         slide.setDuration(1000);
         getWindow().setExitTransition(slide);
     }
+/*
+    ShareLinkContent linkContent = new ShareLinkContent.Builder()
+            .setContentUrl(Uri.parse("http://stackoverflow.com/questions/33198728/share-button-looks-disabled"))
+            .build();
+*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
+
         setupWindowAnimations();
+
 
         ButterKnife.bind(this);
         final boolean easyMode= getIntent().getExtras().getBoolean("easyMode");
 
         timeBar.setVisibility(View.VISIBLE);
         timeBar.setMax(100000);
-
+        int cur = count+1;
+        qNum.setText(cur+"/"+total);
 
         heartButton.setOnLikeListener(new OnLikeListener() {
             @Override
@@ -108,30 +145,27 @@ public class QuizActivity extends Activity {
             }
         });
 
-
         progressBar.setVisibility(View.VISIBLE);
         btnA.setVisibility(View.INVISIBLE);
         btnB.setVisibility(View.INVISIBLE);
         btnC.setVisibility(View.INVISIBLE);
         resultText.setVisibility(View.INVISIBLE);
-        btnCount.setText("0/0");
 
         // call the movie api
-        int num = 1+(int)(Math.random() * 5); // get the page number for api
+        int num = 1+(int)(Math.random() * 10); // get the page number for api
         String page = num +"";
         ApiInterfaceMovie service = ApiInterfaceMovie.retrofit2.create(ApiInterfaceMovie.class);
         float vote = (float) 7;
 
-
         String genre = getIntent().getExtras().getString("genre");
         Call<JsonResponse2> movieList;
-        if (genre.equals("3")){  // get drama
+        if (genre.equals("Drama")){  // get drama
             movieList = service.getMovieWithGenre(18,"en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote);
         }
-        else if (genre.equals("2")){ // get animation
+        else if (genre.equals("Animation")){ // get animation
             movieList = service.getMovieWithGenre(16,"en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote);
         }
-        else if (genre.equals("1")){ // get action movies
+        else if (genre.equals("Action")){ // get action movies
             movieList = service.getMovieWithGenre(28,"en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote);
         }
         else //default case
@@ -182,16 +216,21 @@ public class QuizActivity extends Activity {
                 System.out.println("Asdasdas");
             }
         });
-
     }
 
     public void request(final View view) {
         progressBar.setVisibility(View.VISIBLE);
+        btnA.setClickable(true);
+        btnB.setClickable(true);
+        btnC.setClickable(true);
+        int cur = count+1;
+        qNum.setText(cur+"/"+total);
         if (getAnswer()!=null)  makeButtonInvisible(getAnswer());
 
         heartButton.setLiked(false);
 
         if (count == total) { // go to main page if total count is reached
+            System.out.println("CALL RESULT");
             showResult(getCurrentFocus());
         } else {
             //get the movie title from array
@@ -252,6 +291,20 @@ public class QuizActivity extends Activity {
 
                                 mHandler.postDelayed(new Runnable() {
                                     public void run() {makeButtonVisible(btnA);
+                                        animation = ObjectAnimator.ofInt (timeBar, "progress", 100000, 0);
+                                        animation.setDuration (11000); //in milliseconds
+                                        animation.start();
+                                        waitTimer = new CountDownTimer(11000, 1000) {
+
+                                            public void onTick(long millisUntilFinished) {
+                                                btnCount.setText(millisUntilFinished / 1000+"");
+                                                leftTime=  millisUntilFinished;
+                                            }
+
+                                            public void onFinish() {
+                                                timeOut();
+                                            }
+                                        }.start();
                                     }
                                 }, 1300);
                                 mHandler.postDelayed(new Runnable() {
@@ -263,20 +316,7 @@ public class QuizActivity extends Activity {
                                     }
                                 }, 1500);
 
-                                animation = ObjectAnimator.ofInt (timeBar, "progress", 100000, 0);
-                                animation.setDuration (11000); //in milliseconds
-                                animation.start();
-                                waitTimer = new CountDownTimer(11000, 1000) {
 
-                                    public void onTick(long millisUntilFinished) {
-                                        btnCount.setText(millisUntilFinished / 1000+"");
-                                        leftTime=  millisUntilFinished;
-                                    }
-
-                                    public void onFinish() {
-                                        timeOut();
-                                    }
-                                }.start();
                                 return false;
                             }
                         })
@@ -308,6 +348,21 @@ public class QuizActivity extends Activity {
 
                                 mHandler.postDelayed(new Runnable() {
                                     public void run() {makeButtonVisible(btnA);
+                                        animation = ObjectAnimator.ofInt (timeBar, "progress", 100000, 0);
+                                        animation.setDuration (11000); //in milliseconds
+                                        animation.start();
+
+                                        waitTimer = new CountDownTimer(11000, 1000) {
+
+                                            public void onTick(long millisUntilFinished) {
+                                                btnCount.setText(millisUntilFinished / 1000+"");
+                                                leftTime=  millisUntilFinished;
+                                            }
+
+                                            public void onFinish() {
+                                                timeOut();
+                                            }
+                                        }.start();
                                     }
                                 }, 1300);
                                 mHandler.postDelayed(new Runnable() {
@@ -319,21 +374,7 @@ public class QuizActivity extends Activity {
                                     }
                                 }, 1500);
 
-                                animation = ObjectAnimator.ofInt (timeBar, "progress", 100000, 0);
-                                animation.setDuration (11000); //in milliseconds
-                                animation.start();
 
-                                waitTimer = new CountDownTimer(11000, 1000) {
-
-                                    public void onTick(long millisUntilFinished) {
-                                        btnCount.setText(millisUntilFinished / 1000+"");
-                                        leftTime=  millisUntilFinished;
-                                    }
-
-                                    public void onFinish() {
-                                        timeOut();
-                                    }
-                                }.start();
                                 return false;
                             }
                         })
@@ -350,36 +391,6 @@ public class QuizActivity extends Activity {
 
     //animations
     public void makeButtonVisible(final Button btn){
-   /*     int cx = btnA.getWidth() / 2;
-        int cy = btnA.getHeight() / 2;
-
-        float finalRadius = (float) Math.hypot(cx, cy);
-
-        final Animator anim =
-                ViewAnimationUtils.createCircularReveal(btnA, cx, cy, 0, finalRadius);
-
-        final Animator anim2 =
-                ViewAnimationUtils.createCircularReveal(btnB, cx, cy, 0, finalRadius);
-
-        final Animator anim3 =
-                ViewAnimationUtils.createCircularReveal(btnC, cx, cy, 0, finalRadius);
-
-        // make the view visible and start the animation
-        btnA.setVisibility(View.VISIBLE);
-        anim.start();
-        mHandler.postDelayed(new Runnable() {
-            public void run() {
-                btnB.setVisibility(View.VISIBLE);
-                anim2.start();
-            }
-        },50);
-
-        mHandler.postDelayed(new Runnable() {
-            public void run() {
-                btnC.setVisibility(View.VISIBLE);
-                anim3.start();
-            }
-        },100);*/
 
         final Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.fade_in);
@@ -399,58 +410,6 @@ public class QuizActivity extends Activity {
     }
     public void makeButtonInvisible(final Button btn){
 
-    /*    // get the center for the clipping circle
-        int cx = btnA.getWidth() / 2;
-        int cy = btnA.getHeight() / 2;
-        // get the initial radius for the clipping circle
-        float initialRadius = (float) Math.hypot(cx, cy);
-        // create the animation (the final radius is zero)
-        Animator anim =
-                ViewAnimationUtils.createCircularReveal(btnA, cx, cy, initialRadius, 0);
-        final Animator anim2 =
-                ViewAnimationUtils.createCircularReveal(btnB, cx, cy, initialRadius, 0);
-        final Animator anim3 =
-                ViewAnimationUtils.createCircularReveal(btnC, cx, cy, initialRadius, 0);
-        // make the view invisible when the animation is done
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                btnA.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        anim2.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                btnB.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        anim3.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                btnC.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        // start the animation
-        anim.start();
-        mHandler.postDelayed(new Runnable() {
-            public void run() {
-                btnC.setVisibility(View.VISIBLE);
-                anim2.start();
-            }
-        },50);
-        mHandler.postDelayed(new Runnable() {
-            public void run() {
-                btnC.setVisibility(View.VISIBLE);
-                anim3.start();
-            }
-        },100);*/
-
         final Animation animFadeOut = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.fade_out);
 
@@ -461,7 +420,7 @@ public class QuizActivity extends Activity {
             public void onAnimationEnd(Animation animation) {
                 btn.setVisibility(View.INVISIBLE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    btn.setBackgroundColor(getColor(R.color.colorPrimary));
+                    btn.setBackgroundColor(getColor(R.color.com_facebook_button_background_color));
                 }
             }
             @Override
@@ -525,8 +484,11 @@ public class QuizActivity extends Activity {
             animation.cancel();
             waitTimer = null;
         }
+        btnA.setClickable(false);
+        btnB.setClickable(false);
+        btnC.setClickable(false);
         trueCounter++;
-        colorChangeAnimation(view,0xFF673AB7, 0XFF4CAF50,300);  //true
+        colorChangeAnimation(view,0xFF3b5998, 0XFF4CAF50,300);  //true
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 if ( view == btnA) {
@@ -559,9 +521,13 @@ public class QuizActivity extends Activity {
             animation.cancel();
             waitTimer = null;
         }
+        btnA.setClickable(false);
+        btnB.setClickable(false);
+        btnC.setClickable(false);
+
         final Button ans = getAnswer();
         Button temp = null;
-        colorChangeAnimation(view,0xFF673AB7, 0xFFF44336,300); //false
+        colorChangeAnimation(view,0xFF3b5998, 0xFFF44336,300); //false
         if (btnA!=ans && btnA!=view)    temp=btnA;
         else if (btnB!=ans && btnB!=view)    temp=btnB;
         else if (btnC!=ans && btnC!=view)    temp=btnC;
@@ -572,7 +538,7 @@ public class QuizActivity extends Activity {
             public void run() {
                 makeButtonInvisible((Button) view);
                 makeButtonInvisible(third);
-                colorChangeAnimation(ans,0xFF673AB7, 0XFF4CAF50,300);  //true
+                colorChangeAnimation(ans,0xFF3b5998, 0XFF4CAF50,300);  //true
             }
         }, 1200);
 
@@ -591,8 +557,11 @@ public class QuizActivity extends Activity {
             animation.cancel();
             waitTimer = null;
         }
+        btnA.setClickable(false);
+        btnB.setClickable(false);
+        btnC.setClickable(false);
         btnCount.setText("0");
-        colorChangeAnimation(ans,0xFF673AB7, 0XFF4CAF50,300);  //true
+        colorChangeAnimation(ans,0xFF3b5998, 0XFF4CAF50,300);  //true
         if (ans == btnA){
             makeButtonInvisible(btnB);
             makeButtonInvisible(btnC);
@@ -615,6 +584,7 @@ public class QuizActivity extends Activity {
         }, 2000);
 
     }
+
     public void fillContent(final Button b1, final Button b2, final Button trueButton, final String keyword){
 
         int num = 1+(int)(Math.random() * 100);
@@ -653,30 +623,34 @@ public class QuizActivity extends Activity {
             }
         });
     }
-
-
     public void goHome(View view){
         getWindow().setExitTransition(new Explode());
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent,
                 ActivityOptions
                         .makeSceneTransitionAnimation(this).toBundle());
-
     }
     public void showResult(View view){
 
         Glide.clear(gifView);
-        resultText.clearComposingText();
         progressBar.setVisibility(View.VISIBLE);
 
         makeButtonInvisible(getAnswer());
+        if (btnA.getVisibility() != View.VISIBLE) makeButtonInvisible(btnA);
+        if (btnB.getVisibility() != View.VISIBLE) makeButtonInvisible(btnB);
+        if (btnC.getVisibility() != View.VISIBLE) makeButtonInvisible(btnC);
+
+
         int point = totalPoints/1000;
-        btnCount.setText(point+"");
+
+        qNum.setText(point+"");
+
         if(waitTimer != null) {
             waitTimer.cancel();
             animation.cancel();
             waitTimer = null;
         }
+
         final String keyword;
         ApiInterface service = ApiInterface.retrofit.create(ApiInterface.class);
         Call<JsonResponse> myDownsized;
@@ -697,7 +671,7 @@ public class QuizActivity extends Activity {
             resultText.setText("Good Job");
         }
         else { //guud
-            keyword = "cheers";
+            keyword = "clap";
             resultText.setText("Well Done");
         }
 
@@ -729,14 +703,20 @@ public class QuizActivity extends Activity {
                                                                boolean isFromMemoryCache,
                                                                boolean isFirstResource) {
                                     progressBar.setVisibility(View.INVISIBLE); //gif is ready
-                                    if (keyword.equals("disappointed"))
-                                        setTextWithAnimation(resultText,"You Suck");
+                                    resultText.setVisibility(View.VISIBLE);
+                              /*      if (keyword.equals("disappointed"))
+                                      //  setTextWithAnimation(resultText,"You Suck");
+                                        resultText.setText("You Suck");
                                     else if(keyword.equals("not bad"))
-                                        setTextWithAnimation(resultText,"Not Bad");
+                                       // setTextWithAnimation(resultText,"Not Bad");
+                                        resultText.setText("Not Bad");
                                     else if ( keyword.equals("thumbs up"))
-                                        setTextWithAnimation(resultText,"Good Job");
+                                    //    setTextWithAnimation(resultText,"Good Job");
+                                        resultText.setText("Good Job");
                                     else if (keyword.equals("cheers"))
-                                        setTextWithAnimation(resultText,"Well Done");
+                                    //    setTextWithAnimation(resultText,"Well Done");
+                                        resultText.setText("Well Done");
+                                        */
                                     return false;
                                 }
                             })
@@ -753,6 +733,33 @@ public class QuizActivity extends Activity {
                 Log.d("Error", t.getMessage());
             }
         });
+        resultText.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                // ... Respond to touch events
+                goHome(getCurrentFocus());
+                return true;
+            }
+        });
+        gifView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                // ... Respond to touch events
+                goHome(getCurrentFocus());
+                return true;
+            }
+        });
+    }
+
+    public void shareOnFacebook(View view){
+        System.out.println("asodnasjndas");
+
+
+
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     //work in background

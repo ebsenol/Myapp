@@ -3,17 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.senolb.project">
 
-    <uses-sdk
-        android:minSdkVersion="21"
-        android:targetSdkVersion="24" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
-    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -22,6 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/MyTheme"
         tools:node="replace">
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,6 +28,14 @@
         </activity>
         <activity android:name=".activities.QuizActivity" />
         <activity android:name=".activities.BrowseActivity" />
-    </application>
+        <activity android:name="com.facebook.FacebookActivity"
+            android:configChanges=
+                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:label="@string/app_name" />
 
+    </application>
+    <provider android:authorities="com.facebook.app.FacebookContentProvider1769809926629901"
+        android:name="com.facebook.FacebookContentProvider"
+        android:exported="true"/>
 </manifest>

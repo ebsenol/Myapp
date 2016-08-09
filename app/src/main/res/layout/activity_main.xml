@@ -10,14 +10,15 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="#f9f9f9"
+    android:background="@color/com_facebook_button_background_color"
     tools:context=".activities.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to Giffit"
+        android:text="Giffit"
         android:textStyle="bold"
+        android:textColor="@color/white"
         android:id="@+id/welcomeText"
         android:textSize="40sp"
         android:layout_marginTop="38dp"

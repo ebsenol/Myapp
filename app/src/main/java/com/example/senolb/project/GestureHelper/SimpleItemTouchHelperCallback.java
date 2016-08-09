@@ -1,9 +1,9 @@
-package com.example.senolb.project.GestureHelper;
+package com.example.senolb.project.gesturehelper;
 
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.graphics.Canvas;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 
 
 /**
@@ -58,7 +58,8 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         // Notify the adapter of the dismissal
         mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
       //  GlobalData.removeFromPassingList(viewHolder.getAdapterPosition());
-        System.out.println(i);
+        System.out.println(viewHolder.toString()+"AAAAAA");
+        System.out.println(viewHolder.getAdapterPosition()+"bbbbb");
 
     }
 

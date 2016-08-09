@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#A1887F"
     android:id="@+id/lay"
+    android:background="@color/indigo_A100"
     tools:context=".activities.QuizActivity">
 
     <ImageView
@@ -15,12 +16,12 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
         android:layout_above="@+id/answer_1"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/imageButton" />
+        android:layout_below="@+id/share" />
 
     <ProgressBar
         style="@style/Base.Widget.AppCompat.ProgressBar"
@@ -49,17 +50,20 @@
         android:id="@+id/answer_1"
         android:onClick="check"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:layout_width="350dp"
+        android:textSize="15sp"
+        android:layout_width="match_parent"
         android:fontFamily="sans-serif"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@color/colorPrimary"
-        android:alpha="0.65"
+        android:background="@color/com_facebook_button_background_color"
+        android:alpha="0.95"
         android:shadowColor="#A8A8A8"
         android:textAllCaps="false"
         android:shadowDx="0"
         android:shadowDy="0"
+        android:layout_marginRight="40dp"
+
+        android:layout_marginLeft="40dp"
         android:shadowRadius="5"
         android:layout_above="@+id/answer_2"
         android:layout_centerHorizontal="true" />
@@ -68,15 +72,15 @@
         android:id="@+id/answer_2"
         android:onClick="check"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
+        android:textSize="15sp"
+        android:background="@color/com_facebook_button_background_color"
         android:fontFamily="sans-serif"
-        android:layout_width="350dp"
-        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@color/colorPrimary"
-        android:alpha="0.65"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
+        android:alpha="0.95"
+        android:layout_marginBottom="7dp"
+        android:layout_marginTop="7dp"
         android:shadowColor="#A8A8A8"
         android:shadowDx="0"
         android:shadowDy="0"
@@ -89,15 +93,15 @@
         android:id="@+id/answer_3"
         android:onClick="check"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:fontFamily="sans-serif"
-        android:layout_width="350dp"
-        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@color/colorPrimary"
-        android:alpha="0.65"
+        android:alpha="0.95"
         android:shadowColor="#A8A8A8"
         android:shadowDx="0"
+        android:background="@color/com_facebook_button_background_color"
         android:shadowDy="0"
         android:textAllCaps="false"
         android:layout_alignParentBottom="true"
@@ -118,36 +122,29 @@
         android:textSize="70dp"
         android:layout_marginTop="100dp"
         android:alpha="0.8"
+
         android:layout_centerHorizontal="true" />
 
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageButton"
-            android:layout_marginRight="20dp"
-            android:onClick="goHome"
-            android:background="@drawable/home"
-            android:layout_below="@+id/progressBar"
-            android:layout_alignStart="@+id/progress" />
 
 
     <!-- TOP ITEMS -->
+
+
         <Button
-            style="@android:style/Widget.Material.Light.ImageButton"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
+            style="@android:style/Widget.Material.Light.Button.Borderless.Colored"
+            android:layout_width="75dp"
+            android:layout_height="45dp"
             android:id="@+id/counterButton"
             android:textColor="#000000"
             android:layout_marginRight="10dp"
-            android:textSize="20sp"
+            android:drawableLeft="@drawable/ic_access_time_black_18dp"
+            android:textSize="18sp"
             android:alpha="0.85"
-            android:background="@color/colorPrimary"
             android:shadowColor="#ff1b0f0f"
-            android:fontFamily="sans-serif"
-            android:layout_below="@+id/progressBar"
-            android:layout_toStartOf="@+id/resultText"
-            android:layout_alignBottom="@+id/imageButton" />
+            android:fontFamily="sans-serif-medium"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/progressBar" />
 
     <ProgressBar
             style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
@@ -168,6 +165,40 @@
             android:layout_marginRight="30dp"
         android:layout_below="@+id/progressBar"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        style="@android:style/Widget.Material.Light.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:text=""
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="18dp"
+        android:alpha="0.95"
+        android:id="@+id/qnumber_and_point"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@+id/counterButton"
+        android:layout_below="@+id/progressBar" />
+
+    <com.facebook.share.widget.ShareButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/share"
+        facebook:theme="@style/com_facebook_button"
+        android:layout_below="@+id/counterButton"
+        android:layout_alignStart="@+id/imageViewGif" />
+    <!--
+     <ImageButton
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:id="@+id/imageButton"
+         android:layout_marginRight="20dp"
+         android:onClick="goHome"
+         android:background="@drawable/home"
+         android:layout_below="@+id/progressBar"
+         android:layout_alignStart="@+id/progress" />
+          -->
+
 
 
 </RelativeLayout>

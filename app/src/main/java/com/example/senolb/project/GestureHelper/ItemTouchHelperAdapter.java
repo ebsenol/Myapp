@@ -1,11 +1,10 @@
-package com.example.senolb.project.GestureHelper;
+package com.example.senolb.project.gesturehelper;
 
 /**
  * Created by senolb on 08/08/16.
  */
 
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 
 public interface ItemTouchHelperAdapter {
     /**

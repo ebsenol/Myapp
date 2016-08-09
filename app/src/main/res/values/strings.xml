@@ -7,4 +7,5 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_easy_mode">EasyMode</string>
     <string name="title_activity_drag">DragActivity</string>
+    <string name="facebook_app_id">1769809926629901</string>
 </resources>

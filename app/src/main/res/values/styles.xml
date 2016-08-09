@@ -9,7 +9,6 @@
     <color name="colorHighlight">#ffaaff</color>
     <style name="MyTheme" parent="@android:style/Theme.Material.Light">
         <!-- Customize your theme here. -->\
-        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/primaryDark</item>
         <item name="colorControlHighlight">@color/colorHighlight</item>
@@ -34,9 +33,5 @@
         <item name="android:colorAccent">@android:color/holo_orange_light</item>
         <item name="android:colorPrimary">@android:color/holo_blue_light</item>
     </style>
-    <style name="MyButton" parent="Theme.AppCompat.Light">
-        <item name="colorControlHighlight">@color/colorPrimary</item>
-        <item name="colorButtonNormal">@color/colorAccent</item>
-    </style>
-</resources>
 
+</resources>

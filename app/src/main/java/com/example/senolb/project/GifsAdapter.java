@@ -16,9 +16,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-import com.example.senolb.project.GestureHelper.ItemTouchHelperAdapter;
-import com.example.senolb.project.GestureHelper.ItemTouchHelperViewHolder;
-import com.example.senolb.project.GestureHelper.OnStartDragListener;
+import com.example.senolb.project.gesturehelper.ItemTouchHelperAdapter;
+import com.example.senolb.project.gesturehelper.ItemTouchHelperViewHolder;
+import com.example.senolb.project.gesturehelper.OnStartDragListener;
 
 import java.util.Collections;
 import java.util.List;
