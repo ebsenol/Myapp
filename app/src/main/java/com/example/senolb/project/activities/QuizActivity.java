@@ -110,22 +110,21 @@ public class QuizActivity extends Activity {
         getWindow().setExitTransition(slide);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //facebook share things
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
         ButterKnife.bind(this);
 
-
-
-
         setupWindowAnimations();
-        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
 
+        //downloading loading gif
+        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
         Glide.with(getApplicationContext())
                 .load(getIntent().getExtras().getString("url"))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -133,6 +132,7 @@ public class QuizActivity extends Activity {
                 .into(imageViewTarget);
 
         final boolean easyMode= getIntent().getExtras().getBoolean("easyMode");
+
 
         timeBar.setVisibility(View.VISIBLE);
         timeBar.setMax(100000);
@@ -148,7 +148,6 @@ public class QuizActivity extends Activity {
             @Override
             public void unLiked(LikeButton likeButton) {
                 GlobalData.removeFromPassingList(urls[count]);
-
             }
         });
 
@@ -662,19 +661,6 @@ public class QuizActivity extends Activity {
                                                                boolean isFirstResource) {
                                     progressBar.setVisibility(View.INVISIBLE); //gif is ready
                                     resultText.setVisibility(View.VISIBLE);
-                              /*      if (keyword.equals("disappointed"))
-                                      //  setTextWithAnimation(resultText,"You Suck");
-                                        resultText.setText("You Suck");
-                                    else if(keyword.equals("not bad"))
-                                       // setTextWithAnimation(resultText,"Not Bad");
-                                        resultText.setText("Not Bad");
-                                    else if ( keyword.equals("thumbs up"))
-                                    //    setTextWithAnimation(resultText,"Good Job");
-                                        resultText.setText("Good Job");
-                                    else if (keyword.equals("cheers"))
-                                    //    setTextWithAnimation(resultText,"Well Done");
-                                        resultText.setText("Well Done");
-                                        */
                                     return false;
                                 }
                             })
@@ -691,6 +677,13 @@ public class QuizActivity extends Activity {
                 Log.d("Error", t.getMessage());
             }
         });
+        ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                .setContentUrl(Uri.parse(url))
+                .setContentTitle("I earned "+point+" points at Giffit.")
+                .setContentDescription("Giffit")
+                .build();
+        facebookShareButton.setShareContent(linkContent);
+
         resultText.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 // ... Respond to touch events

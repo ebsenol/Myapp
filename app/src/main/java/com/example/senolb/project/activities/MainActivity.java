@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends Activity {
     @BindView(R.id.spinner) Spinner spin;
-    private static final String[]paths = {"Choose a genre", "Action","Animation","Drama"};
+    private static final String[]paths = {"All", "Action","Animation","Drama"};
     private String genre;
     private String passUrl;
 
@@ -30,15 +30,14 @@ public class MainActivity extends Activity {
         getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-//https://media.giphy.com/media/10XLlvdBlLtRFm/giphy.gif
+
         passUrl = "https://media.giphy.com/media/10XLlvdBlLtRFm/giphy.gif";
         Glide.with(getApplicationContext())
                 .load(passUrl)
-                .downloadOnly(300,300)
-        // .diskCacheStrategy(DiskCacheStrategy.NONE)
-        ;
+                .downloadOnly(300,300);
+
         ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,
-                android.R.layout.simple_spinner_item,paths);
+                android.R.layout.simple_spinner_dropdown_item,paths);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin.setAdapter(adapter);
@@ -69,15 +68,16 @@ public class MainActivity extends Activity {
         intent.putExtra("genre",genre+"");
         intent.putExtra("easyMode",false);
         intent.putExtra("url",passUrl);
-        overridePendingTransition(R.anim.push_left_in,R.anim.push_pop_out);
-        startActivity(intent);
+        startActivity(intent,
+                ActivityOptions
+                        .makeSceneTransitionAnimation(this).toBundle());
     }
+
     public void easyMode(View view){
-        Intent intent = new Intent(this, QuizActivity.class);
+        Intent intent = new Intent(MainActivity.this, QuizActivity.class);
         intent.putExtra("genre",genre+"");
         intent.putExtra("easyMode", true);
         intent.putExtra("url",passUrl);
-        getWindow().setExitTransition(new Explode());
         startActivity(intent,
                 ActivityOptions
                         .makeSceneTransitionAnimation(this).toBundle());}
@@ -88,5 +88,4 @@ public class MainActivity extends Activity {
         startActivity(intent,
                 ActivityOptions
                         .makeSceneTransitionAnimation(this).toBundle());}
-
 }
