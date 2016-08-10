@@ -35,5 +35,7 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.2.1'
     compile 'com.github.jd-alexander:LikeButton:0.2.0' // like button
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.2.0'
+    compile 'com.nightonke:boommenu:1.0.9'
+
 }
 

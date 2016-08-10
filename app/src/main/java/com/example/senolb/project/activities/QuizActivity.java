@@ -123,14 +123,14 @@ public class QuizActivity extends Activity {
 
         setupWindowAnimations();
 
-        //downloading loading gif
+    /*    //downloading loading gif
         GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
         Glide.with(getApplicationContext())
                 .load(getIntent().getExtras().getString("url"))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .crossFade()
                 .into(imageViewTarget);
-
+*/
         final boolean easyMode= getIntent().getExtras().getBoolean("easyMode");
 
 
@@ -173,6 +173,9 @@ public class QuizActivity extends Activity {
         }
         else if (genre.equals("Action")){ // get action movies
             movieList = service.getMovieWithGenre(28,"en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote);
+        }
+        else if (genre.equals("Sci-Fi")){
+            movieList = service.getMovieWithGenre(878,"en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote);
         }
         else //default case
            movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote); // insert queries
