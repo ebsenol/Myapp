@@ -9,11 +9,6 @@ import android.support.v4.content.ContextCompat;
 import android.transition.Explode;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-
-import com.bumptech.glide.Glide;
 import com.example.senolb.project.R;
 import com.nightonke.boommenu.BoomMenuButton;
 import com.nightonke.boommenu.Types.BoomType;
@@ -21,7 +16,6 @@ import com.nightonke.boommenu.Types.ButtonType;
 import com.nightonke.boommenu.Types.DimType;
 import com.nightonke.boommenu.Types.PlaceType;
 import com.nightonke.boommenu.Util;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -29,6 +23,7 @@ public class MainActivity extends Activity {
     @BindView(R.id.boom) BoomMenuButton boomMenu;
     private String genre="";
     private String passUrl;
+    private boolean init = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +41,9 @@ public class MainActivity extends Activity {
         boomMenu.setOnSubButtonClickListener(new BoomMenuButton.OnSubButtonClickListener() {
             @Override
             public void onClick(int buttonIndex) {
+                System.out.println(buttonIndex+"");
+                System.out.println("ASDASDASD");
+
                 switch (buttonIndex){
                     case 0:
                         genre = "Action";
@@ -118,9 +116,9 @@ public class MainActivity extends Activity {
                 subButtonDrawables, // The drawables of images of sub buttons. Can not be null.
                 subButtonTexts,     // The texts of sub buttons, ok to be null.
                 subButtonColors,    // The colors of sub buttons, including pressed-state and normal-state.
-                ButtonType.CIRCLE,     // The button type.
+                ButtonType.HAM,     // The button type.
                 BoomType.LINE,  // The boom type.
-                PlaceType.CIRCLE_4_1,  // The place type.
+                PlaceType.HAM_4_1,  // The place type.
                 null,               // Ease type to move the sub buttons when showing.
                 null,               // Ease type to scale the sub buttons when showing.
                 null,               // Ease type to rotate the sub buttons when showing.
@@ -132,5 +130,4 @@ public class MainActivity extends Activity {
 
         boomMenu.setDimType(DimType.DIM_9);
     }
-
 }
