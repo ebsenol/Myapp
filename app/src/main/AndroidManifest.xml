@@ -33,9 +33,9 @@
                 "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:label="@string/app_name" />
-
+        <provider android:authorities="com.facebook.app.FacebookContentProvider1769809926629901"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
     </application>
-    <provider android:authorities="com.facebook.app.FacebookContentProvider1769809926629901"
-        android:name="com.facebook.FacebookContentProvider"
-        android:exported="true"/>
+
 </manifest>

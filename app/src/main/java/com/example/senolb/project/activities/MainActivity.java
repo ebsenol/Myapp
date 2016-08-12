@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.transition.Explode;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.View;
 import android.view.Window;
 import com.example.senolb.project.R;
@@ -70,9 +72,8 @@ public class MainActivity extends Activity {
         intent.putExtra("genre",genre);
         intent.putExtra("easyMode",false);
         intent.putExtra("url",passUrl);
-        startActivity(intent,
-                ActivityOptions
-                        .makeSceneTransitionAnimation(this).toBundle());
+        startActivity(intent);
+        this.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
     public void easyMode(View view){
@@ -80,16 +81,22 @@ public class MainActivity extends Activity {
         intent.putExtra("genre",genre);
         intent.putExtra("easyMode", true);
         intent.putExtra("url",passUrl);
-        startActivity(intent,
-                ActivityOptions
-                        .makeSceneTransitionAnimation(this).toBundle());}
+        startActivity(intent);
+        this.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+    }
 
     public void explore(View view){
-        Intent intent = new Intent(this, BrowseActivity.class);
+
+
+        Intent intent = new Intent(MainActivity.this, BrowseActivity.class);
+
         getWindow().setExitTransition(new Explode());
-        startActivity(intent,
-                ActivityOptions
-                        .makeSceneTransitionAnimation(this).toBundle());}
+        startActivity(intent
+               //, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+        );
+        this.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+    }
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

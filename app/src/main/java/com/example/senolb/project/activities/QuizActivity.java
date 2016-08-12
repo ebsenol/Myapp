@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -51,7 +50,6 @@ import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -59,6 +57,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class QuizActivity extends Activity {
+
     @BindView(R.id.imageViewGif) ImageView gifView;
     @BindView(R.id.answer_1) Button btnA;
     @BindView(R.id.answer_2) Button btnB;
@@ -83,12 +82,16 @@ public class QuizActivity extends Activity {
     private int totalPoints = 0;
     private int trueCounter=0;
     private double savedLeftTime = 0;
+
     private Handler mHandler = new Handler();
     private CountDownTimer waitTimer;
     private ObjectAnimator animation;
 
     private CallbackManager callbackManager;
     private ShareDialog shareDialog;
+
+    private LoadEasyGifs loadEasy;
+    private LoadNormalGifs loadNormal;
 
     private FacebookCallback<Sharer.Result> shareCallback = new FacebookCallback<Sharer.Result>() {
         @Override
@@ -113,17 +116,33 @@ public class QuizActivity extends Activity {
     }
 
     @Override
+    public void onBackPressed() {
+       // super.onBackPressed();
+        if(loadEasy != null)  loadEasy.cancel(true);
+        else if(loadNormal != null) loadNormal.cancel(true);
+
+        if(waitTimer != null) {
+            waitTimer.cancel();
+            animation.pause();
+            waitTimer = null;
+        }
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        this.overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         //facebook share things
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
         ButterKnife.bind(this);
 
-        setupWindowAnimations();
+        //setupWindowAnimations();
 
     /*    //downloading loading gif
         GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
@@ -206,8 +225,14 @@ public class QuizActivity extends Activity {
                     }
 
                     // load 3 gifs
-                    if(easyMode) new LoadEasyGifs(3).execute();
-                    else         new LoadNormalGifs(3).execute();
+                    if(easyMode) {
+                        loadEasy = new LoadEasyGifs(3);
+                        loadEasy.execute();
+                    }
+                    else {
+                        loadNormal = new LoadNormalGifs(3);
+                        loadNormal.execute();
+                    }
 
                     mHandler.postDelayed(new Runnable() {
                         public void run() {
@@ -342,10 +367,12 @@ public class QuizActivity extends Activity {
                 .into(imageViewTarget);
 
             if ( getIntent().getExtras().getBoolean("easyMode") && inCache<total) {
-                new LoadEasyGifs(1).execute();
+                loadEasy = new LoadEasyGifs(1);
+                loadEasy.execute();
             }
             else if (inCache<total) {
-                new LoadNormalGifs(1).execute();
+                loadNormal = new LoadNormalGifs(1);
+                loadNormal.execute();
             }
             count++;
         }
@@ -586,6 +613,7 @@ public class QuizActivity extends Activity {
         });
     }
     public void goHome(View view){
+
         getWindow().setExitTransition(new Explode());
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent,
@@ -601,7 +629,6 @@ public class QuizActivity extends Activity {
         if (btnA.getVisibility() != View.VISIBLE) makeButtonInvisible(btnA);
         if (btnB.getVisibility() != View.VISIBLE) makeButtonInvisible(btnB);
         if (btnC.getVisibility() != View.VISIBLE) makeButtonInvisible(btnC);
-
 
         int point = totalPoints/1000;
 
@@ -669,8 +696,7 @@ public class QuizActivity extends Activity {
                                     return false;
                                 }
                             })
-                            .into(imageViewTarget)
-                    ;
+                            .into(imageViewTarget);
 
                 } else { //unsuccessful response
 
@@ -682,6 +708,8 @@ public class QuizActivity extends Activity {
                 Log.d("Error", t.getMessage());
             }
         });
+
+
         ShareLinkContent linkContent = new ShareLinkContent.Builder()
                 .setContentUrl(Uri.parse(url))
                 .setContentTitle("I earned "+point+" points at Giffit.")
@@ -692,14 +720,14 @@ public class QuizActivity extends Activity {
         resultText.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 // ... Respond to touch events
-                goHome(getCurrentFocus());
+                onBackPressed();
                 return true;
             }
         });
         gifView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 // ... Respond to touch events
-                goHome(getCurrentFocus());
+                onBackPressed();
                 return true;
             }
         });
@@ -749,19 +777,18 @@ public class QuizActivity extends Activity {
                         String height = data.getImageHeight();
                         String width = data.getImageWidth();
                         urls[inCache] = url;
-                        System.out.println(titles[inCache]);
                         Glide   .with(getApplicationContext())
                                 .load(url)
                                 .downloadOnly(Integer.parseInt(height),Integer.parseInt(width))
                         //.diskCacheStrategy(DiskCacheStrategy.ALL)
                         ;
+                        Log.i("normal async", "one more");
                         incrementInCache();
 
-                        if (count > 1){
+                        if (count > 1 && !isCancelled()){
                             count--;
                             callNormal(count);
                         }
-
                     } else { //unsuccessful response
 
                     }
@@ -803,21 +830,17 @@ public class QuizActivity extends Activity {
 
                         url = data.getImages().getDownsized().getUrl();
                         urls[inCache] = url;
-                        System.out.println(inCache);
-                        //  System.out.println(titles[inCache]+"---------");
                         String height = data.getImages().getDownsized().getHeight();
                         String width = data.getImages().getDownsized().getWidth();
                         Glide   .with(getApplicationContext())
                                 .load(urls[inCache])
                                 .downloadOnly(Integer.parseInt(height), Integer.parseInt(width))
-                        // .diskCacheStrategy(DiskCacheStrategy.NONE)
                         ;
-
+                        Log.i("easy async", "one more");
                         incrementInCache();
 
-                        if (count > 1){
+                        if (count > 1 && !isCancelled()){
                             count--;
-                            //  new LoadEasyGifs(count).execute();
                             callEasy(count);
                         }
                     } else { //unsuccessful response
@@ -833,10 +856,15 @@ public class QuizActivity extends Activity {
             });
             return null;
         }
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("easy on post" , "puc");
+        }
     }
+
     @Override
     public void onRestart() {
-        super.onRestart();  // Always call the superclass method first
+        super.onRestart();
         animation.resume();
         waitTimer = new CountDownTimer((long) savedLeftTime, 1000) {
             public void onTick(long millisUntilFinished) {
@@ -851,7 +879,7 @@ public class QuizActivity extends Activity {
     }
     @Override
     public void onStop() {
-        super.onStop();  // Always call the superclass method first
+        super.onStop();
         savedLeftTime = leftTime;
         if(waitTimer != null) {
             waitTimer.cancel();
@@ -860,6 +888,3 @@ public class QuizActivity extends Activity {
         }
     }
 }
-
-
-
