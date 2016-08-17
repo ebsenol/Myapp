@@ -1,14 +1,11 @@
 package com.example.senolb.project.activities;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.transition.Explode;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
 import android.view.View;
 import android.view.Window;
 import com.example.senolb.project.R;
@@ -18,14 +15,13 @@ import com.nightonke.boommenu.Types.ButtonType;
 import com.nightonke.boommenu.Types.DimType;
 import com.nightonke.boommenu.Types.PlaceType;
 import com.nightonke.boommenu.Util;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends Activity {
     @BindView(R.id.boom) BoomMenuButton boomMenu;
     private String genre="";
-    private String passUrl;
-    private boolean init = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,17 +31,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-      /*  passUrl = "https://media.giphy.com/media/10XLlvdBlLtRFm/giphy.gif";
-        Glide.with(getApplicationContext())
-                .load(passUrl)
-                .downloadOnly(300,300);
-*/
         boomMenu.setOnSubButtonClickListener(new BoomMenuButton.OnSubButtonClickListener() {
             @Override
             public void onClick(int buttonIndex) {
-                System.out.println(buttonIndex+"");
-                System.out.println("ASDASDASD");
-
                 switch (buttonIndex){
                     case 0:
                         genre = "Action";
@@ -71,7 +59,6 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, QuizActivity.class);
         intent.putExtra("genre",genre);
         intent.putExtra("easyMode",false);
-        intent.putExtra("url",passUrl);
         startActivity(intent);
         this.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
@@ -80,24 +67,20 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, QuizActivity.class);
         intent.putExtra("genre",genre);
         intent.putExtra("easyMode", true);
-        intent.putExtra("url",passUrl);
+       // intent.putExtra("url",passUrl);
         startActivity(intent);
         this.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
-    public void explore(View view){
-
-
-        Intent intent = new Intent(MainActivity.this, BrowseActivity.class);
+    public void goToLikes(View view){
+        Intent intent = new Intent(MainActivity.this, LikesActivity.class);
 
         getWindow().setExitTransition(new Explode());
-        startActivity(intent
-               //, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
-        );
+        startActivity(intent);
         this.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
-
+    //boom menu
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -134,7 +117,6 @@ public class MainActivity extends Activity {
                 null,               // Ease type to rotate the sub buttons when dismissing.
                 null                // Rotation degree.
         );
-
         boomMenu.setDimType(DimType.DIM_9);
     }
 }

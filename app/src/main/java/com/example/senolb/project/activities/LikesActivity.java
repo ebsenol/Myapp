@@ -1,6 +1,7 @@
 package com.example.senolb.project.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,14 +15,22 @@ import com.example.senolb.project.gesturehelper.SimpleItemTouchHelperCallback;
 
 import java.util.ArrayList;
 
-public class BrowseActivity extends Activity implements OnStartDragListener {
+public class LikesActivity extends Activity implements OnStartDragListener {
     private ArrayList<String> gifUrls=new ArrayList<>();
     private ItemTouchHelper helper;
 
     @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        this.overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_browse);
+        setContentView(R.layout.activity_likes);
         RecyclerView rvGifs = (RecyclerView) findViewById(R.id.rvGifs);
 
         ArrayList<String> pass = GlobalData.getList();
@@ -49,6 +58,7 @@ public class BrowseActivity extends Activity implements OnStartDragListener {
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         helper.startDrag(viewHolder);
     }
+
     public void removeIndex(int i){
         gifUrls.remove(i);
     }

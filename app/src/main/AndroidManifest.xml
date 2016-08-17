@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.QuizActivity" />
-        <activity android:name=".activities.BrowseActivity" />
+        <activity android:name=".activities.LikesActivity" />
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
                 "keyboard|keyboardHidden|screenLayout|screenSize|orientation"

@@ -109,11 +109,6 @@ public class QuizActivity extends Activity {
             Log.d("HelloFacebook", "Success!");
         }
     };
-    private void setupWindowAnimations() {
-        Slide slide = new Slide();
-        slide.setDuration(1000);
-        getWindow().setExitTransition(slide);
-    }
 
     @Override
     public void onBackPressed() {
@@ -142,18 +137,7 @@ public class QuizActivity extends Activity {
         setContentView(R.layout.activity_quiz);
         ButterKnife.bind(this);
 
-        //setupWindowAnimations();
-
-    /*    //downloading loading gif
-        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(gifView);
-        Glide.with(getApplicationContext())
-                .load(getIntent().getExtras().getString("url"))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .crossFade()
-                .into(imageViewTarget);
-*/
         final boolean easyMode= getIntent().getExtras().getBoolean("easyMode");
-
 
         timeBar.setVisibility(View.VISIBLE);
         timeBar.setMax(100000);
@@ -210,14 +194,7 @@ public class QuizActivity extends Activity {
                     for (Result result : response.body().getResults()) {
                         // remove the part after ":" and add to the array
                         if(result.getOriginalLanguage().equals("en")){
-                           // int ind = result.getOriginalTitle().indexOf(":");
-                            //if (ind != -1) {
-                             //   String str = result.getOriginalTitle().substring(0, ind);
-                              //  titles[i] = str;
-                            //} else {
-                                titles[i] = result.getOriginalTitle();
-                            //}
-                            System.out.println(titles[i]);
+                            titles[i] = result.getOriginalTitle();
                             i++;
                         }
 
@@ -241,7 +218,6 @@ public class QuizActivity extends Activity {
                         }
                     },2000);
 
-
                 } else { //unsuccessful response
 
                 }
@@ -249,7 +225,6 @@ public class QuizActivity extends Activity {
             @Override
             public void onFailure(Call<JsonResponse2> call, Throwable t) {
                 Log.d("Error", t.getMessage());
-                System.out.println("Asdasdas");
             }
         });
     }
@@ -258,9 +233,8 @@ public class QuizActivity extends Activity {
         progressBar.setVisibility(View.VISIBLE);
         int cur = count+1;
         qNum.setText(cur+"/"+total);
+
         if (getAnswer()!=null)  makeButtonInvisible(getAnswer());
-
-
 
         heartButton.setLiked(false);
 
@@ -408,9 +382,7 @@ public class QuizActivity extends Activity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 btn.setVisibility(View.INVISIBLE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    btn.setBackgroundColor(getColor(R.color.com_facebook_button_background_color));
-                }
+                btn.setBackgroundColor(0xff3b5998);
             }
             @Override
             public void onAnimationRepeat(Animation animation) {}
@@ -592,23 +564,19 @@ public class QuizActivity extends Activity {
                     int num2 = 1+(int)(Math.random() * 15);
                     if (num==num2 || !response.body().getResults().get(num2).getOriginalLanguage().equals("en"))
                         num2 = 1+(int)(Math.random() * 15);
-                   // b1.setVisibility(View.INVISIBLE);
-                  //  b2.setVisibility(View.INVISIBLE);
-                    //trueButton.setVisibility(View.INVISIBLE);
                     b1.setText(response.body().getResults().get(num).getOriginalTitle());
                     b2.setText(response.body().getResults().get(num2).getOriginalTitle());
                     trueButton.setText(keyword);
 
                 }
              else {
-                    System.out.println("ASDASD5");   //unsuccessful response
+                    //unsuccessful response
                 }
             }
             @Override
             public void onFailure(Call<JsonResponse2> call, Throwable t) {
                 //display the error
                 Log.d("Error", t.getMessage());
-                System.out.println("ASDASD4");
             }
         });
     }
@@ -620,6 +588,7 @@ public class QuizActivity extends Activity {
                 ActivityOptions
                         .makeSceneTransitionAnimation(this).toBundle());
     }
+
     public void showResult(View view){
 
         Glide.clear(gifView);
@@ -652,7 +621,6 @@ public class QuizActivity extends Activity {
         {
             keyword = "not bad";
             resultText.setText("Not Bad");
-
         }
         else if ( point<50 )
         {
@@ -709,7 +677,6 @@ public class QuizActivity extends Activity {
             }
         });
 
-
         ShareLinkContent linkContent = new ShareLinkContent.Builder()
                 .setContentUrl(Uri.parse(url))
                 .setContentTitle("I earned "+point+" points at Giffit.")
@@ -731,13 +698,6 @@ public class QuizActivity extends Activity {
                 return true;
             }
         });
-    }
-
-    public void shareOnFacebook(View view){
-        System.out.println("asodnasjndas");
-
-
-
     }
 
     @Override

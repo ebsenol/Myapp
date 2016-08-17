@@ -4,6 +4,9 @@ import android.graphics.Canvas;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
+
+import com.example.senolb.project.GlobalData;
 
 
 /**
@@ -48,6 +51,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
             return false;
         }
 
+        //Swaps the index of moved items
         // Notify the adapter of the move
         mAdapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
         return true;
@@ -58,8 +62,6 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         // Notify the adapter of the dismissal
         mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
       //  GlobalData.removeFromPassingList(viewHolder.getAdapterPosition());
-        System.out.println(viewHolder.toString()+"AAAAAA");
-        System.out.println(viewHolder.getAdapterPosition()+"bbbbb");
 
     }
 
@@ -100,5 +102,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
             ItemTouchHelperViewHolder itemViewHolder = (ItemTouchHelperViewHolder) viewHolder;
             itemViewHolder.onItemClear();
         }
+        Log.i("msg", viewHolder.getLayoutPosition()+"  position");
+        //GlobalData.removeFromPassingList(viewHolder.getLayoutPosition()+1);
     }
 }
