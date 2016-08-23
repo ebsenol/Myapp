@@ -101,12 +101,13 @@ public class QuizActivity extends Activity {
 
         @Override
         public void onError(FacebookException error) {
-            Log.d("HelloFacebook", String.format("Error: %s", error.toString()));
+           // Log.d("HelloFacebook", String.format("Error: %s", error.toString()));
         }
 
         @Override
         public void onSuccess(Sharer.Result result) {
-            Log.d("HelloFacebook", "Success!");
+
+            //Log.d("HelloFacebook", "Success!");
         }
     };
 
@@ -121,8 +122,8 @@ public class QuizActivity extends Activity {
             animation.pause();
             waitTimer = null;
         }
-
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("genre","");
         startActivity(intent);
         this.overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
@@ -179,11 +180,12 @@ public class QuizActivity extends Activity {
         else if (genre.equals("Action")){ // get action movies
             movieList = service.getMovieWithGenre(28,"en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote);
         }
-        else if (genre.equals("Sci-Fi")){
+        else if (genre.equals("Sci-Fi")){ // get sci-fi
             movieList = service.getMovieWithGenre(878,"en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote);
         }
-        else //default case
-           movieList = service.getMovie("en","052ab3ed3f1f39a747fc24b817ee31e7",page,vote); // insert queries
+        else { //default case
+            movieList = service.getMovie("en", "052ab3ed3f1f39a747fc24b817ee31e7", page, vote); // insert queries
+        }
 
         movieList.enqueue(new Callback<JsonResponse2>() {
             @Override
@@ -192,12 +194,10 @@ public class QuizActivity extends Activity {
                     int i = 0;
 
                     for (Result result : response.body().getResults()) {
-                        // remove the part after ":" and add to the array
                         if(result.getOriginalLanguage().equals("en")){
                             titles[i] = result.getOriginalTitle();
                             i++;
                         }
-
                         if (i>total-1) break; // reached to number of total movies
                     }
 
@@ -224,7 +224,7 @@ public class QuizActivity extends Activity {
             }
             @Override
             public void onFailure(Call<JsonResponse2> call, Throwable t) {
-                Log.d("Error", t.getMessage());
+             //   Log.d("Error", t.getMessage());
             }
         });
     }
@@ -322,10 +322,12 @@ public class QuizActivity extends Activity {
                                 }.start();
                             }
                         }, 1300);
+
                         mHandler.postDelayed(new Runnable() {
                             public void run() {makeButtonVisible(btnB);
                             }
                         }, 1400);
+
                         mHandler.postDelayed(new Runnable() {
                             public void run() {makeButtonVisible(btnC);
                                 btnA.setClickable(true);
@@ -333,7 +335,6 @@ public class QuizActivity extends Activity {
                                 btnC.setClickable(true);
                             }
                         }, 1500);
-
 
                         return false;
                     }
@@ -361,9 +362,10 @@ public class QuizActivity extends Activity {
             @Override
             public void onAnimationStart(Animation animation) {
             }
+
             @Override
             public void onAnimationEnd(Animation animation) {
-               btn.setVisibility(View.VISIBLE);
+                btn.setVisibility(View.VISIBLE);
             }
             @Override
             public void onAnimationRepeat(Animation animation) {
@@ -371,6 +373,7 @@ public class QuizActivity extends Activity {
         }));
         btn.startAnimation(animFadeIn);
     }
+
     public void makeButtonInvisible(final Button btn){
 
         final Animation animFadeOut = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -379,16 +382,20 @@ public class QuizActivity extends Activity {
         animFadeOut.setAnimationListener((new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {}
+
             @Override
             public void onAnimationEnd(Animation animation) {
                 btn.setVisibility(View.INVISIBLE);
                 btn.setBackgroundColor(0xff3b5998);
             }
+
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
         }));
         btn.startAnimation(animFadeOut);
     }
+
     public void setTextWithAnimation(View view, String text){
         int cx = view.getWidth() / 2;
         int cy = view.getHeight() / 2;
@@ -408,48 +415,60 @@ public class QuizActivity extends Activity {
             public void onAnimationUpdate(ValueAnimator animator) {
                 view.setBackgroundColor((int) animator.getAnimatedValue());
             }
-
         });
         colorAnimation.start();
     }
 
     //answer related
     public void check(View view) { // checks if the answer is true or false
-        if ( answer == 1 && btnA == view){
+        if ( answer == 1 && btnA == view) {
             trueAnswer(btnA);
         }
-        else if ( answer == 2 && btnB == view){
+        else if ( answer == 2 && btnB == view) {
             trueAnswer(btnB);
         }
-        else if ( answer == 3 && btnC == view){
+        else if ( answer == 3 && btnC == view) {
             trueAnswer(btnC);
         }
         else if ( answer == -1 ){ //first click
             request(view);
         }
-        else falseAnswer(view);
+        else {
+            falseAnswer(view);
+        }
     }
-    public Button getAnswer(){
-        if (answer == 1)
+
+    public Button getAnswer() {
+        if (answer == 1) {
             return btnA;
-        else if (answer == 2)
+        }
+        else if (answer == 2) {
             return btnB;
-        else if (answer == 3)
+        }
+        else if (answer == 3) {
             return btnC;
-        else return null;
+        }
+        else {
+            return null;
+        }
     }
+
     public void trueAnswer(final View view) {
         totalPoints+=leftTime;
+
         if(waitTimer != null) {
             waitTimer.cancel();
             animation.cancel();
             waitTimer = null;
         }
+
         btnA.setClickable(false);
         btnB.setClickable(false);
         btnC.setClickable(false);
         trueCounter++;
+
         colorChangeAnimation(view,0xFF3b5998, 0XFF4CAF50,300);  //true
+
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 if ( view == btnA) {
@@ -467,7 +486,6 @@ public class QuizActivity extends Activity {
             }
         }, 1000);
 
-
        // btnCount.setText(trueCounter + "/" + count);
         mHandler.postDelayed(new Runnable() {
             public void run() {
@@ -477,11 +495,13 @@ public class QuizActivity extends Activity {
         }, 2000);
     }
     public void falseAnswer(final View view){
+
         if(waitTimer != null) {
             waitTimer.cancel();
             animation.cancel();
             waitTimer = null;
         }
+
         btnA.setClickable(false);
         btnB.setClickable(false);
         btnC.setClickable(false);
@@ -503,7 +523,6 @@ public class QuizActivity extends Activity {
             }
         }, 1200);
 
-
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 progressBar.setVisibility(View.VISIBLE);
@@ -511,18 +530,22 @@ public class QuizActivity extends Activity {
             }
         }, 3000);
     }
+
     public void timeOut(){
         final Button ans = getAnswer();
+
         if(waitTimer != null) {
             waitTimer.cancel();
             animation.cancel();
             waitTimer = null;
         }
+
         btnA.setClickable(false);
         btnB.setClickable(false);
         btnC.setClickable(false);
         btnCount.setText("0");
         colorChangeAnimation(ans,0xFF3b5998, 0XFF4CAF50,300);  //true
+
         if (ans == btnA){
             makeButtonInvisible(btnB);
             makeButtonInvisible(btnC);
@@ -530,13 +553,12 @@ public class QuizActivity extends Activity {
         else if(ans==btnB){
             makeButtonInvisible(btnA);
             makeButtonInvisible(btnC);
-
         }
         else if(ans==btnC){
             makeButtonInvisible(btnA);
             makeButtonInvisible(btnB);
-
         }
+
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 progressBar.setVisibility(View.VISIBLE);
@@ -557,29 +579,34 @@ public class QuizActivity extends Activity {
             @Override
             public void onResponse(Call<JsonResponse2> call, Response<JsonResponse2> response) {
                 if (response.isSuccessful()) { //got response
-                    int i = 0;
                     int num = 1+(int)(Math.random() * 15);
-                    if(!response.body().getResults().get(num).getOriginalLanguage().equals("en"))
-                        num = 1+(int)(Math.random() * 15);
+
+                    while (!response.body().getResults().get(num).getOriginalLanguage().equals("en")) {
+                        num = 1 + (int) (Math.random() * 15);
+                    }
+
                     int num2 = 1+(int)(Math.random() * 15);
-                    if (num==num2 || !response.body().getResults().get(num2).getOriginalLanguage().equals("en"))
-                        num2 = 1+(int)(Math.random() * 15);
+
+                    while ( num==num2 || !response.body().getResults().get(num2).getOriginalLanguage().equals("en")) {
+                        num2 = 1 + (int) (Math.random() * 15);
+                    }
                     b1.setText(response.body().getResults().get(num).getOriginalTitle());
                     b2.setText(response.body().getResults().get(num2).getOriginalTitle());
                     trueButton.setText(keyword);
-
                 }
              else {
                     //unsuccessful response
                 }
             }
+
             @Override
             public void onFailure(Call<JsonResponse2> call, Throwable t) {
                 //display the error
-                Log.d("Error", t.getMessage());
+            //    Log.d("Error", t.getMessage());
             }
         });
     }
+
     public void goHome(View view){
 
         getWindow().setExitTransition(new Explode());
@@ -595,6 +622,11 @@ public class QuizActivity extends Activity {
         progressBar.setVisibility(View.VISIBLE);
 
         makeButtonInvisible(getAnswer());
+
+        btnA.setClickable(false);
+        btnB.setClickable(false);
+        btnC.setClickable(false);
+
         if (btnA.getVisibility() != View.VISIBLE) makeButtonInvisible(btnA);
         if (btnB.getVisibility() != View.VISIBLE) makeButtonInvisible(btnB);
         if (btnC.getVisibility() != View.VISIBLE) makeButtonInvisible(btnC);
@@ -673,7 +705,7 @@ public class QuizActivity extends Activity {
             @Override
             public void onFailure(Call<JsonResponse> call,
                                   Throwable t) {
-                Log.d("Error", t.getMessage());
+             //   Log.d("Error", t.getMessage());
             }
         });
 
@@ -742,7 +774,7 @@ public class QuizActivity extends Activity {
                                 .downloadOnly(Integer.parseInt(height),Integer.parseInt(width))
                         //.diskCacheStrategy(DiskCacheStrategy.ALL)
                         ;
-                        Log.i("normal async", "one more");
+                      //  Log.i("normal async", "one more");
                         incrementInCache();
 
                         if (count > 1 && !isCancelled()){
@@ -756,12 +788,13 @@ public class QuizActivity extends Activity {
                 @Override
                 public void onFailure(Call<JsonResponse> call,
                                       Throwable t) {
-                    Log.d("Error", t.getMessage());
+                   // Log.d("Error", t.getMessage());
                 }
             });
             return null;
         }
     }
+
     class LoadEasyGifs extends AsyncTask<Void,Void,String>{
 
         private int count;
@@ -777,7 +810,7 @@ public class QuizActivity extends Activity {
             ListInterface service = ListInterface.retrofit.create(ListInterface.class);
             Call<com.example.senolb.project.easymodegif.JsonResponse> myDownsized =
                     service.getDownsized("dc6zaTOxFJmzC", "json", titles[inCache], "3"); // api key, format, tag
-            System.out.println(titles[inCache]+"---------");
+          //  System.out.println(titles[inCache]+"---------");
             myDownsized.enqueue(new Callback<com.example.senolb.project.easymodegif.JsonResponse>() {
                 @Override
                 public void onResponse(Call<com.example.senolb.project.easymodegif.JsonResponse> call,
@@ -796,7 +829,7 @@ public class QuizActivity extends Activity {
                                 .load(urls[inCache])
                                 .downloadOnly(Integer.parseInt(height), Integer.parseInt(width))
                         ;
-                        Log.i("easy async", "one more");
+                      //  Log.i("easy async", "one more");
                         incrementInCache();
 
                         if (count > 1 && !isCancelled()){
@@ -811,7 +844,7 @@ public class QuizActivity extends Activity {
                 @Override
                 public void onFailure(Call<com.example.senolb.project.easymodegif.JsonResponse> call,
                                       Throwable t) {
-                    Log.d("Error", t.getMessage());
+               //     Log.d("Error", t.getMessage());
                 }
             });
             return null;

@@ -11,6 +11,7 @@ android {
         versionName "1.0"
         minSdkVersion 21
         targetSdkVersion 24
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
         release {
@@ -37,5 +38,7 @@ dependencies {
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.2.0'
     compile 'com.nightonke:boommenu:1.0.9'
 
+    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    compile 'com.android.support.test:runner:0.5'
 }
 

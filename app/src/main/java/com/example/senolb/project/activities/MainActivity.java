@@ -52,7 +52,6 @@ public class MainActivity extends Activity {
                 }
             }
         });
-
     }
 
     public void goToPage1(View view){
@@ -67,14 +66,12 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, QuizActivity.class);
         intent.putExtra("genre",genre);
         intent.putExtra("easyMode", true);
-       // intent.putExtra("url",passUrl);
         startActivity(intent);
         this.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
     public void goToLikes(View view){
         Intent intent = new Intent(MainActivity.this, LikesActivity.class);
-
         getWindow().setExitTransition(new Explode());
         startActivity(intent);
         this.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
@@ -92,16 +89,20 @@ public class MainActivity extends Activity {
                 R.drawable.drama,
                 R.drawable.scifi
         };
-        for (int i = 0; i < 4; i++)
+
+        for (int i = 0; i < 4; i++) {
             subButtonDrawables[i] = ContextCompat.getDrawable(this, drawablesResource[i]);
+        }
 
         String[] subButtonTexts = new String[]{"Action", "Animation", "Drama","Sci-Fi"};
 
         int[][] subButtonColors = new int[4][2];
+
         for (int i = 0; i < 4; i++) {
             subButtonColors[i][1] = ContextCompat.getColor(this, R.color.com_facebook_button_background_color);
             subButtonColors[i][0] = Util.getInstance().getPressedColor(subButtonColors[i][1]);
         }
+
         boomMenu.init(
                 subButtonDrawables, // The drawables of images of sub buttons. Can not be null.
                 subButtonTexts,     // The texts of sub buttons, ok to be null.
@@ -117,6 +118,7 @@ public class MainActivity extends Activity {
                 null,               // Ease type to rotate the sub buttons when dismissing.
                 null                // Rotation degree.
         );
+
         boomMenu.setDimType(DimType.DIM_9);
     }
 }

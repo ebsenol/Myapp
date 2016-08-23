@@ -39,8 +39,6 @@ public class LikesActivity extends Activity implements OnStartDragListener {
             gifUrls.add(pass.get(i));
         }
 
-        System.out.println(this.gifUrls.size()+"");
-
         final GifsAdapter gifAdapter = new GifsAdapter(getApplicationContext(), gifUrls,this);
 
         rvGifs.setHasFixedSize(true);
