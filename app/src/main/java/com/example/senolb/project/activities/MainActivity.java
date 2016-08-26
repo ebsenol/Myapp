@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.transition.Explode;
 import android.view.View;
 import android.view.Window;
+
 import com.example.senolb.project.R;
 import com.nightonke.boommenu.BoomMenuButton;
 import com.nightonke.boommenu.Types.BoomType;
@@ -23,6 +24,11 @@ public class MainActivity extends Activity {
     @BindView(R.id.boom) BoomMenuButton boomMenu;
     private String genre="";
 
+    @Override
+    public void onBackPressed() {
+        finish();
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

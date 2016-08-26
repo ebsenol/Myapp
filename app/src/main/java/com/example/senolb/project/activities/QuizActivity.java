@@ -9,12 +9,10 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.transition.Explode;
-import android.transition.Slide;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -50,6 +49,7 @@ import com.facebook.share.widget.ShareButton;
 import com.facebook.share.widget.ShareDialog;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;

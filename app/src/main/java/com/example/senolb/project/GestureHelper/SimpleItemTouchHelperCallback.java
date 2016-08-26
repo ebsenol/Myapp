@@ -6,8 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 
-import com.example.senolb.project.GlobalData;
-
 
 /**
  * Created by senolb on 08/08/16.
